@@ -7,7 +7,6 @@ class HTML2md:
     def process(file_name: str):
         f = open(file_name, "r")
         html_txt = f.read()
-        print(html_txt)
         f.close()
 
         parser = HTML2mdConverter()
