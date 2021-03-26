@@ -2,4 +2,4 @@
 
 HTML to Markdown tool, designed to migrate content from Google Sites to gitlab pages.
 
-Tested with [fiquipedia.es](http://fiquipedia.es)
+Tested with [fiquipedia.es](http://fiquipedia.es) (Work in progress)

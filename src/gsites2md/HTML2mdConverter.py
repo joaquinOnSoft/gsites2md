@@ -5,12 +5,14 @@ class HTML2mdConverter(HTMLParser):
     def __init__(self):
         super().__init__()
         self.reset()
+        self.md = ""
 
     def handle_starttag(self, tag, attrs):
         switcher = {
             "img": HTML2mdConverter.img(attrs)
         }
-        tag_handler = switcher.get(self.lasttag, HTML2mdConverter.default())
+        html2md = switcher.get(self.lasttag, HTML2mdConverter.default())
+        self.md += html2md
 
     def handle_endtag(self, tag):
         # print("Encountered an end tag :", tag)
@@ -29,34 +31,35 @@ class HTML2mdConverter(HTMLParser):
             "ol": HTML2mdConverter.ol(data),
             "li": HTML2mdConverter.li(data),
         }
-        tag_handler = switcher.get(self.lasttag, HTML2mdConverter.default())
+        html2md = switcher.get(self.lasttag, HTML2mdConverter.default())
+        self.md += html2md
 
     def error(self, message):
         pass
 
     @staticmethod
     def h1(data: str) -> str:
-        return "#" + data + "\n"
+        return "# " + data + "\n"
 
     @staticmethod
     def h2(data: str) -> str:
-        return "##" + data + "\n"
+        return "## " + data + "\n"
 
     @staticmethod
     def h3(data: str) -> str:
-        return "###" + data + "\n"
+        return "### " + data + "\n"
 
     @staticmethod
     def h4(data: str) -> str:
-        return "####" + data + "\n"
+        return "#### " + data + "\n"
 
     @staticmethod
     def h5(data: str) -> str:
-        return "#####" + data + "\n"
+        return "##### " + data + "\n"
 
     @staticmethod
     def h6(data: str) -> str:
-        return "######" + data + "\n"
+        return "###### " + data + "\n"
 
     @staticmethod
     def strong(data: str) -> str:
@@ -64,15 +67,15 @@ class HTML2mdConverter(HTMLParser):
 
     @staticmethod
     def ul(data: str) -> str:
-        return "*" + data + "\n"
+        return "* " + data + "\n"
 
     @staticmethod
     def ol(data: str) -> str:
-        return "1." + data + "\n"
+        return "1. " + data + "\n"
 
     @staticmethod
     def li(data: str) -> str:
-        return "*" + data + "\n"
+        return "* " + data + "\n"
 
     @staticmethod
     def img(attrs) -> str:
@@ -86,7 +89,7 @@ class HTML2mdConverter(HTMLParser):
             if name == "src":
                 link = value
 
-        return f'![{alt}]({link})'
+        return f'![{alt}]({link})\n'
 
     @staticmethod
     def default() -> str:
