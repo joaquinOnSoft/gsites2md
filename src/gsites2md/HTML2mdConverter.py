@@ -43,11 +43,12 @@ class HTML2mdConverter(HTMLParser):
                 "li": self.li(data)
             }
 
+            # Manage nested tag properly
             if self.last_tag_full_parsed:
                 html2md = HTML2mdConverter.default_tag(data)
             else:
                 html2md = switcher.get(self.lasttag, HTML2mdConverter.default_tag(data))
-                
+
             self.md += html2md
 
     def error(self, message):
@@ -117,6 +118,7 @@ class HTML2mdConverter(HTMLParser):
 
         alt = HTML2mdConverter.__get_attribute_by_name(attrs, "alt")
         link = HTML2mdConverter.__get_attribute_by_name(attrs, "src")
+
         return f'![{alt}]({link})\n'
 
     @staticmethod
