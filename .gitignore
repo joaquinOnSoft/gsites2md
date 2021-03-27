@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 
+*.html.md
+
 .DS_Store
 .idea/
 venv/
