@@ -6,7 +6,7 @@ class HTML2md:
     @staticmethod
     def process(input_file_name: str, output_file_name=None) -> str:
         """
-
+        Convert and HTML file in a Markdown file.
         :param input_file_name: Input file name
         :param output_file_name: Output file name. If is not provided the output file will have
         the same name of the input file, changing the extension .html/.htm to .md
@@ -19,8 +19,6 @@ class HTML2md:
         parser = HTML2mdConverter()
         parser.feed(html_txt)
         md = parser.md
-
-        # print(md)
 
         if output_file_name is None:
             output_file_name = input_file_name.replace('.html', '.md').replace('.htm', '.md')

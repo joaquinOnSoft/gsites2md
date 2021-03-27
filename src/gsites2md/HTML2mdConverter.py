@@ -14,19 +14,16 @@ class HTML2mdConverter(HTMLParser):
         html2md = ""
         if tag == "img":
             html2md = HTML2mdConverter.img(attrs)
-        elif tag == "ul":
-            self.__push_nested_list(tag)
-        elif tag == "ol":
+        elif tag == "ul" or  tag == "ol":
             self.__push_nested_list(tag)
 
         self.md += html2md
 
     def handle_endtag(self, tag):
         self.last_tag_full_parsed = True
-        if tag == "ul":
+        if tag == "ul" or tag == "ol":
             self.__pop_nested_list(tag)
-        elif tag == "ol":
-            self.__pop_nested_list(tag)
+            self.md += "\n"
 
     def handle_data(self, data):
         if data.replace(" ", "") != "\n":
@@ -97,6 +94,8 @@ class HTML2mdConverter(HTMLParser):
         return self.nested_list.pop()
 
     def li(self, data: str) -> str:
+        data = data.strip()
+
         size = len(self.nested_list)
         if size > 0:
             filler = ""

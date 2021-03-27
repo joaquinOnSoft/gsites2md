@@ -20,7 +20,7 @@ class TestHTML2md(TestCase):
         return txt
 
     def test_list(self):
-        self.__process("test_list.html", "test_list.md")
+        self.__process("test-list.html", "test-list.md")
 
     def __process(self, input_file_name: str, output_file_name: str):
         input_file_name = self.base_path + input_file_name
@@ -33,4 +33,7 @@ class TestHTML2md(TestCase):
         expected_output = TestHTML2md.read_file(output_file_name)
         generated_output = TestHTML2md.read_file(generated_output_file_name)
 
-        self.assertEqual(generated_output, expected_output)
+        self.assertEqual(expected_output, generated_output)
+
+        # Remove generated file during the test
+        os.remove(generated_output_file_name)
