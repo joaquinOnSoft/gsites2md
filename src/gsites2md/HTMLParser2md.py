@@ -39,9 +39,13 @@ class HTMLParser2md(HTMLParser):
                 "h6": HTML2mdConverter.h6(data),
                 "h7": HTML2mdConverter.h7(data),
                 "h8": HTML2mdConverter.h8(data),
-                "strong": HTML2mdConverter.strong(data),
                 "li": self.li(data),
-                "script": HTML2mdConverter.ignore_tag(data)
+                "script": HTML2mdConverter.ignore_tag(data),
+                "strong": HTML2mdConverter.strong(data),
+                # TODO "table": HTML2mdConverter.table(data),
+                # TODO "th": HTML2mdConverter.th(data),
+                # TODO "tr": HTML2mdConverter.tr(data),
+                # TODO "td": HTML2mdConverter.td(data),
             }
 
             # Manage nested tag properly
