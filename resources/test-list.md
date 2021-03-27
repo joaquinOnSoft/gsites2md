@@ -1,5 +1,5 @@
 ---
-title = "Title"
+title = Title
 language = yaml
 ---
    * Unsorted list 1
