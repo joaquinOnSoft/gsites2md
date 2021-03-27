@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from ..HTML2md import HTML2mdConverter
+from ..HTML2mdConverter import HTML2mdConverter
 
 
 class TestHTML2mdConverter(TestCase):
@@ -29,9 +29,10 @@ class TestHTML2mdConverter(TestCase):
     def test_h8(self):
         self.assertEqual("\n######## Hello\n", HTML2mdConverter.h8("Hello"))
 
-    def test_strong(self):
-        self.assertEqual("**Hello**", HTML2mdConverter.strong("Hello"))
-
     def test_img(self):
         attrs = [("src", "img/picture1.png"), ("alt", "My first picture")]
         self.assertEqual("![My first picture](img/picture1.png)\n", HTML2mdConverter.img(attrs))
+
+    def test_strong(self):
+        self.assertEqual("**Hello**", HTML2mdConverter.strong("Hello"))
+

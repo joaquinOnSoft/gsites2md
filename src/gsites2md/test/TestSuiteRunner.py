@@ -10,6 +10,7 @@ suite = unittest.TestSuite()
 # add tests to the test suite
 suite.addTests(loader.loadTestsFromModule(gsites2md.test.TestHTML2md))
 suite.addTests(loader.loadTestsFromModule(gsites2md.test.TestHTML2mdConverter))
+suite.addTests(loader.loadTestsFromModule(gsites2md.test.TestHTMLParser2md))
 
 
 # initialize a runner, pass it your suite and run it

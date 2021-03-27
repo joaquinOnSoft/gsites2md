@@ -1,4 +1,4 @@
-from gsites2md.HTML2mdConverter import HTML2mdConverter
+from gsites2md.HTMLParser2md import HTMLParser2md
 
 
 class HTML2md:
@@ -16,7 +16,7 @@ class HTML2md:
         html_txt = f.read()
         f.close()
 
-        parser = HTML2mdConverter()
+        parser = HTMLParser2md()
         parser.feed(html_txt)
         md = parser.md
 
