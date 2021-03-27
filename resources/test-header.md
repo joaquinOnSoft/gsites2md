@@ -1,5 +1,6 @@
 ---
-title = "Title"
+title = Title
+language = yaml
 ---
 
 # Title H1
