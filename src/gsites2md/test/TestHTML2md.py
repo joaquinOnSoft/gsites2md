@@ -19,6 +19,9 @@ class TestHTML2md(TestCase):
         f.close()
         return txt
 
+    def test_header(self):
+        self.__process("test-header.html", "test-header.md")
+
     def test_list(self):
         self.__process("test-list.html", "test-list.md")
 

@@ -14,7 +14,7 @@ class HTML2mdConverter(HTMLParser):
         html2md = ""
         if tag == "img":
             html2md = HTML2mdConverter.img(attrs)
-        elif tag == "ul" or  tag == "ol":
+        elif tag == "ul" or tag == "ol":
             self.__push_nested_list(tag)
 
         self.md += html2md
@@ -28,6 +28,7 @@ class HTML2mdConverter(HTMLParser):
     def handle_data(self, data):
         if data.replace(" ", "") != "\n":
             switcher = {
+                "title": HTML2mdConverter.title(data),
                 "h1": HTML2mdConverter.h1(data),
                 "h2": HTML2mdConverter.h2(data),
                 "h3": HTML2mdConverter.h3(data),
@@ -37,7 +38,8 @@ class HTML2mdConverter(HTMLParser):
                 "h7": HTML2mdConverter.h7(data),
                 "h8": HTML2mdConverter.h8(data),
                 "strong": HTML2mdConverter.strong(data),
-                "li": self.li(data)
+                "li": self.li(data),
+                "script": HTML2mdConverter.ignore_tag(data)
             }
 
             # Manage nested tag properly
@@ -50,6 +52,13 @@ class HTML2mdConverter(HTMLParser):
 
     def error(self, message):
         pass
+
+    @staticmethod
+    def title(data: str) -> str:
+        meta = "---\n"
+        meta += f'title = "{data}"'
+        meta += "\n---\n"
+        return meta
 
     @staticmethod
     def h1(data: str) -> str:
@@ -129,4 +138,8 @@ class HTML2mdConverter(HTMLParser):
 
     @staticmethod
     def default_tag(data) -> str:
+        return data
+
+    @staticmethod
+    def ignore_tag(data) -> str:
         return ""
