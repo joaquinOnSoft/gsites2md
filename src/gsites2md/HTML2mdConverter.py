@@ -7,22 +7,25 @@ class HTML2mdConverter(HTMLParser):
         self.reset()
         self.md = ""
         self.nested_list = []
+        self.last_tag_full_parsed = False
 
     def handle_starttag(self, tag, attrs):
+        self.last_tag_full_parsed = False
         html2md = ""
         if tag == "img":
             html2md = HTML2mdConverter.img(attrs)
         elif tag == "ul":
             self.__push_nested_list(tag)
-        elif tag == "l":
+        elif tag == "ol":
             self.__push_nested_list(tag)
 
         self.md += html2md
 
     def handle_endtag(self, tag):
+        self.last_tag_full_parsed = True
         if tag == "ul":
             self.__pop_nested_list(tag)
-        elif tag == "l":
+        elif tag == "ol":
             self.__pop_nested_list(tag)
 
     def handle_data(self, data):
@@ -39,7 +42,12 @@ class HTML2mdConverter(HTMLParser):
                 "strong": HTML2mdConverter.strong(data),
                 "li": self.li(data)
             }
-            html2md = switcher.get(self.lasttag, HTML2mdConverter.default(data))
+
+            if self.last_tag_full_parsed:
+                html2md = HTML2mdConverter.default_tag(data)
+            else:
+                html2md = switcher.get(self.lasttag, HTML2mdConverter.default_tag(data))
+                
             self.md += html2md
 
     def error(self, message):
@@ -119,9 +127,5 @@ class HTML2mdConverter(HTMLParser):
         return ""
 
     @staticmethod
-    def default(data) -> str:
+    def default_tag(data) -> str:
         return ""
-
-    @staticmethod
-    def do_nothing():
-        pass
