@@ -37,6 +37,9 @@ class TestHTML2mdConverter(TestCase):
     def test_h8(self):
         self.assertEqual("\n######## Hello\n", HTML2mdConverter.h8("Hello"))
 
+    def test_i(self):
+        self.assertEqual("*Hello*", HTML2mdConverter.i("Hello"))
+
     def test_img(self):
         attrs = [("src", "img/picture1.png"), ("alt", "My first picture")]
         self.assertEqual("![My first picture](img/picture1.png)\n", HTML2mdConverter.img(attrs))

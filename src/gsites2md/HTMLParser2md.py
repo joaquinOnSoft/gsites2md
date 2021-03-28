@@ -56,6 +56,7 @@ class HTMLParser2md(HTMLParser):
                 "h6": HTML2mdConverter.h6(data),
                 "h7": HTML2mdConverter.h7(data),
                 "h8": HTML2mdConverter.h8(data),
+                "i": HTML2mdConverter.i(data),
                 # <kbd> defines some text as keyboard input in a document:
                 "kbd": HTML2mdConverter.var(data),
                 "li": self.li(data),

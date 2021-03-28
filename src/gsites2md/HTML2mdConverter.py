@@ -52,6 +52,10 @@ class HTML2mdConverter:
         return "\n######## " + data + "\n"
 
     @staticmethod
+    def i(data: str) -> str:
+        return "*" + data + "*"
+
+    @staticmethod
     def img(attrs) -> str:
         alt = ""
         link = ""
