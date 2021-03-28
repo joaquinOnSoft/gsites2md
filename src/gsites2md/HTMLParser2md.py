@@ -15,7 +15,9 @@ class HTMLParser2md(HTMLParser):
     def handle_starttag(self, tag, attrs):
         self.last_tag_full_parsed = False
         html2md = ""
-        if tag == "img":
+        if tag == "br":
+            html2md = HTML2mdConverter.br(attrs)
+        elif tag == "img":
             html2md = HTML2mdConverter.img(attrs)
         elif tag == "tr":
             html2md = HTML2mdConverter.tr(attrs)
@@ -62,6 +64,7 @@ class HTMLParser2md(HTMLParser):
                 "sampl": HTML2mdConverter.var(data),
                 "script": HTML2mdConverter.ignore_tag(data),
                 "strong": HTML2mdConverter.strong(data),
+                "style": HTML2mdConverter.ignore_tag(data),
                 "th": HTML2mdConverter.td(data),
                 "td": HTML2mdConverter.td(data),
                 # The <var> tag is used to defines a variable in programming or

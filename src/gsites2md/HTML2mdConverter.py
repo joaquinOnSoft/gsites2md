@@ -7,6 +7,10 @@ class HTML2mdConverter:
         return quote
 
     @staticmethod
+    def br(data: str) -> str:
+        return "\n"
+
+    @staticmethod
     def code(data: str) -> str:
         """
         Manage <code> and <pre> tags
