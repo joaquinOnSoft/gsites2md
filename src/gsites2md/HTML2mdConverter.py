@@ -1,5 +1,9 @@
 class HTML2mdConverter:
     @staticmethod
+    def a(href: str, data: str) -> str:
+        return f'[{data}]({href})'
+
+    @staticmethod
     def blockquote(data: str) -> str:
         quote = ""
         for line in data.splitlines():
@@ -60,8 +64,8 @@ class HTML2mdConverter:
         alt = ""
         link = ""
 
-        alt = HTML2mdConverter.__get_attribute_by_name(attrs, "alt")
-        link = HTML2mdConverter.__get_attribute_by_name(attrs, "src")
+        alt = HTML2mdConverter.get_attribute_by_name(attrs, "alt")
+        link = HTML2mdConverter.get_attribute_by_name(attrs, "src")
 
         return f'![{alt}]({link})\n'
 
@@ -103,7 +107,7 @@ class HTML2mdConverter:
         return ""
 
     @staticmethod
-    def __get_attribute_by_name(attrs, attr_name):
+    def get_attribute_by_name(attrs, attr_name):
         for name, value in attrs:
             if name == attr_name:
                 return value

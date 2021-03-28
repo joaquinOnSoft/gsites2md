@@ -7,15 +7,26 @@ class HTMLParser2md(HTMLParser):
         super().__init__()
         self.reset()
         self.md = ""
+
+        # Attribute to manage nested lists
         self.nested_list = []
+
+        # flag to identify tags in inside other tags data section
         self.last_tag_full_parsed = False
+
+        # Attribute to identify header rows in tables
         self.last_cell = None
         self.cell_in_row_counter = 0
+
+        # Attribute to manage <a> tags
+        self.href = None
 
     def handle_starttag(self, tag, attrs):
         self.last_tag_full_parsed = False
         html2md = ""
-        if tag == "br":
+        if tag == "a":
+            self.href = HTML2mdConverter.get_attribute_by_name(attrs, "href")
+        elif tag == "br":
             html2md = HTML2mdConverter.br(attrs)
         elif tag == "img":
             html2md = HTML2mdConverter.img(attrs)
@@ -36,7 +47,10 @@ class HTMLParser2md(HTMLParser):
 
     def handle_endtag(self, tag):
         self.last_tag_full_parsed = True
-        if tag == "ul" or tag == "ol":
+
+        if tag == "a":
+            self.href = None
+        elif tag == "ul" or tag == "ol":
             self.__pop_nested_list(tag)
             self.md += "\n"
         elif tag == "tr":
@@ -45,8 +59,7 @@ class HTMLParser2md(HTMLParser):
     def handle_data(self, data):
         if data.replace(" ", "") != "\n":
             switcher = {
-                "title": HTML2mdConverter.title(data),
-                # TODO "a": HTML2mdConverter.a(data),
+                "a": HTML2mdConverter.a(self.href, data),
                 "code": HTML2mdConverter.code(data),
                 "h1": HTML2mdConverter.h1(data),
                 "h2": HTML2mdConverter.h2(data),
@@ -66,8 +79,9 @@ class HTMLParser2md(HTMLParser):
                 "script": HTML2mdConverter.ignore_tag(data),
                 "strong": HTML2mdConverter.strong(data),
                 "style": HTML2mdConverter.ignore_tag(data),
-                "th": HTML2mdConverter.td(data),
                 "td": HTML2mdConverter.td(data),
+                "th": HTML2mdConverter.td(data),
+                "title": HTML2mdConverter.title(data),
                 # The <var> tag is used to defines a variable in programming or
                 # in a mathematical expression. The content inside is typically displayed in italic.
                 "var": HTML2mdConverter.var(data)
