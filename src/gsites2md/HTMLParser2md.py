@@ -31,6 +31,7 @@ class HTMLParser2md(HTMLParser):
             switcher = {
                 "title": HTML2mdConverter.title(data),
                 # TODO "a": HTML2mdConverter.a(data),
+                "code": HTML2mdConverter.code(data),
                 "h1": HTML2mdConverter.h1(data),
                 "h2": HTML2mdConverter.h2(data),
                 "h3": HTML2mdConverter.h3(data),
@@ -39,9 +40,17 @@ class HTMLParser2md(HTMLParser):
                 "h6": HTML2mdConverter.h6(data),
                 "h7": HTML2mdConverter.h7(data),
                 "h8": HTML2mdConverter.h8(data),
+                # <kbd> defines some text as keyboard input in a document:
+                "kbd": HTML2mdConverter.var(data),
                 "li": self.li(data),
+                "pre": HTML2mdConverter.code(data),
+                # <samp> defines some text as sample output from a computer program in a document
+                "sampl": HTML2mdConverter.var(data),
                 "script": HTML2mdConverter.ignore_tag(data),
                 "strong": HTML2mdConverter.strong(data),
+                # The <var> tag is used to defines a variable in programming or
+                # in a mathematical expression. The content inside is typically displayed in italic.
+                "var": HTML2mdConverter.var(data),
                 # TODO "table": HTML2mdConverter.table(data),
                 # TODO "td": HTML2mdConverter.td(data),
                 # TODO "th": HTML2mdConverter.th(data),

@@ -10,6 +10,9 @@ class TestHTML2mdConverter(TestCase):
         md_quote = "> This is the AK-47 assault rifle, \n> the preferred weapon of your enemy;\n"
         self.assertEqual(md_quote, HTML2mdConverter.blockquote(quote))
 
+    def test_code(self):
+        self.assertEqual("\n```\nalert( 'Hello, world!' );\n```\n", HTML2mdConverter.code("alert( 'Hello, world!' );"))
+
     def test_h1(self):
         self.assertEqual("\n# Hello\n", HTML2mdConverter.h1("Hello"))
 
@@ -40,4 +43,8 @@ class TestHTML2mdConverter(TestCase):
 
     def test_strong(self):
         self.assertEqual("**Hello**", HTML2mdConverter.strong("Hello"))
+
+    def test_var(self):
+        self.assertEqual("`File not found.`", HTML2mdConverter.var("File not found."))
+
 

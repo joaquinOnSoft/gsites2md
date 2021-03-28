@@ -7,6 +7,15 @@ class HTML2mdConverter:
         return quote
 
     @staticmethod
+    def code(data: str) -> str:
+        """
+        Manage <code> and <pre> tags
+        :param data: text preformatted, usually code.
+        :return: Markdown for Syntax highlighting
+        """
+        return "\n```\n" + data + "\n```\n"
+
+    @staticmethod
     def h1(data: str) -> str:
         return "\n# " + data + "\n"
 
@@ -59,6 +68,15 @@ class HTML2mdConverter:
         meta += 'language = yaml\n'
         meta += "---\n"
         return meta
+
+    @staticmethod
+    def var(data: str) -> str:
+        """
+        Manage <var>, <samp> and <kbd> tags.
+        :param data: text used to defines a variable in programming or in a mathematical expression.
+        :return: Markdown for Inline code
+        """
+        return "`" + data + "`"
 
     @staticmethod
     def default_tag(data) -> str:
