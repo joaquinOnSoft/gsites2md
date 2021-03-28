@@ -9,14 +9,24 @@ class HTMLParser2md(HTMLParser):
         self.md = ""
         self.nested_list = []
         self.last_tag_full_parsed = False
+        self.last_cell = None
+        self.cell_in_row_counter = 0
 
     def handle_starttag(self, tag, attrs):
         self.last_tag_full_parsed = False
         html2md = ""
         if tag == "img":
             html2md = HTML2mdConverter.img(attrs)
-        if tag == "tr":
+        elif tag == "tr":
             html2md = HTML2mdConverter.tr(attrs)
+            self.last_cell = None
+            self.cell_in_row_counter = 0
+        elif tag == "th":
+            self.last_cell = "th"
+            self.cell_in_row_counter += 1
+        elif tag == "td":
+            self.last_cell = "td"
+            self.cell_in_row_counter += 1
         elif tag == "ul" or tag == "ol":
             self.__push_nested_list(tag)
 
@@ -27,6 +37,8 @@ class HTMLParser2md(HTMLParser):
         if tag == "ul" or tag == "ol":
             self.__pop_nested_list(tag)
             self.md += "\n"
+        elif tag == "tr":
+            self.md += self.tr()
 
     def handle_data(self, data):
         if data.replace(" ", "") != "\n":
@@ -54,11 +66,7 @@ class HTMLParser2md(HTMLParser):
                 "td": HTML2mdConverter.td(data),
                 # The <var> tag is used to defines a variable in programming or
                 # in a mathematical expression. The content inside is typically displayed in italic.
-                "var": HTML2mdConverter.var(data),
-                # TODO "table": HTML2mdConverter.table(data),
-                # TODO "td": HTML2mdConverter.td(data),
-                # TODO "th": HTML2mdConverter.th(data),
-                # TODO "tr": HTML2mdConverter.tr(data),
+                "var": HTML2mdConverter.var(data)
             }
 
             # Manage nested tag properly
@@ -94,3 +102,13 @@ class HTMLParser2md(HTMLParser):
                 return filler + "1. " + data + "\n"
         else:
             return ""
+
+    def tr(self) -> str:
+        header = ""
+
+        if self.last_cell == "th":
+            for x in range(self.cell_in_row_counter):
+                header += "| --- "
+            header = "\n" + header + "| "
+
+        return header
