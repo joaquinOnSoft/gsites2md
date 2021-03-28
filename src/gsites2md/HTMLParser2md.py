@@ -15,6 +15,8 @@ class HTMLParser2md(HTMLParser):
         html2md = ""
         if tag == "img":
             html2md = HTML2mdConverter.img(attrs)
+        if tag == "tr":
+            html2md = HTML2mdConverter.tr(attrs)
         elif tag == "ul" or tag == "ol":
             self.__push_nested_list(tag)
 
@@ -48,6 +50,8 @@ class HTMLParser2md(HTMLParser):
                 "sampl": HTML2mdConverter.var(data),
                 "script": HTML2mdConverter.ignore_tag(data),
                 "strong": HTML2mdConverter.strong(data),
+                "th": HTML2mdConverter.td(data),
+                "td": HTML2mdConverter.td(data),
                 # The <var> tag is used to defines a variable in programming or
                 # in a mathematical expression. The content inside is typically displayed in italic.
                 "var": HTML2mdConverter.var(data),

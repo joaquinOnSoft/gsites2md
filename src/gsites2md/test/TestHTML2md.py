@@ -28,6 +28,9 @@ class TestHTML2md(TestCase):
     def test_script(self):
         self.__process("test-script.html", "test-script.md")
 
+    def test_table(self):
+        self.__process("test-table.html", "test-table.md")
+
     def __process(self, input_file_name: str, output_file_name: str):
         input_file_name = self.base_path + input_file_name
         output_file_name = self.base_path + output_file_name
