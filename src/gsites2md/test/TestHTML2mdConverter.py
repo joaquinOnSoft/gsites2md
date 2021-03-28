@@ -5,6 +5,11 @@ from ..HTML2mdConverter import HTML2mdConverter
 
 class TestHTML2mdConverter(TestCase):
 
+    def test_blockquote(self):
+        quote = "This is the AK-47 assault rifle, \nthe preferred weapon of your enemy;"
+        md_quote = "> This is the AK-47 assault rifle, \n> the preferred weapon of your enemy;\n"
+        self.assertEqual(md_quote, HTML2mdConverter.blockquote(quote))
+
     def test_h1(self):
         self.assertEqual("\n# Hello\n", HTML2mdConverter.h1("Hello"))
 

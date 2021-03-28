@@ -1,12 +1,10 @@
 class HTML2mdConverter:
-
     @staticmethod
-    def title(data: str) -> str:
-        meta = "---\n"
-        meta += f'title = {data}\n'
-        meta += 'language = yaml\n'
-        meta += "---\n"
-        return meta
+    def blockquote(data: str) -> str:
+        quote = ""
+        for line in data.splitlines():
+            quote += "> " + line + "\n"
+        return quote
 
     @staticmethod
     def h1(data: str) -> str:
@@ -55,11 +53,12 @@ class HTML2mdConverter:
         return "**" + data + "**"
 
     @staticmethod
-    def __get_attribute_by_name(attrs, attr_name):
-        for name, value in attrs:
-            if name == attr_name:
-                return value
-        return ""
+    def title(data: str) -> str:
+        meta = "---\n"
+        meta += f'title = {data}\n'
+        meta += 'language = yaml\n'
+        meta += "---\n"
+        return meta
 
     @staticmethod
     def default_tag(data) -> str:
@@ -67,4 +66,11 @@ class HTML2mdConverter:
 
     @staticmethod
     def ignore_tag(data) -> str:
+        return ""
+
+    @staticmethod
+    def __get_attribute_by_name(attrs, attr_name):
+        for name, value in attrs:
+            if name == attr_name:
+                return value
         return ""

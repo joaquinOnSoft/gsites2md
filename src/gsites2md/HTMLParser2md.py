@@ -43,9 +43,9 @@ class HTMLParser2md(HTMLParser):
                 "script": HTML2mdConverter.ignore_tag(data),
                 "strong": HTML2mdConverter.strong(data),
                 # TODO "table": HTML2mdConverter.table(data),
+                # TODO "td": HTML2mdConverter.td(data),
                 # TODO "th": HTML2mdConverter.th(data),
                 # TODO "tr": HTML2mdConverter.tr(data),
-                # TODO "td": HTML2mdConverter.td(data),
             }
 
             # Manage nested tag properly
@@ -57,7 +57,7 @@ class HTMLParser2md(HTMLParser):
             self.md += html2md
 
     def error(self, message):
-        pass
+        print(message)
 
     def __push_nested_list(self, tag: str):
         self.nested_list.append(tag)
