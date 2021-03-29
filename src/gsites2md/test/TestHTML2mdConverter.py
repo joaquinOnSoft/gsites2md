@@ -7,6 +7,7 @@ class TestHTML2mdConverter(TestCase):
 
     def test_a(self):
         self.assertEqual("[Fiquipedia](http://fiquipedia.es)", HTML2mdConverter.a("http://fiquipedia.es", "Fiquipedia"))
+        self.assertEqual("[Fiquipedia is cool](http://fiquipedia.es)", HTML2mdConverter.a("http://fiquipedia.es", "Fiquipedia \n\n\t is cool"))
 
     def test_blockquote(self):
         quote = "This is the AK-47 assault rifle, \nthe preferred weapon of your enemy;"

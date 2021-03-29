@@ -1,3 +1,5 @@
+import re
+
 from html.parser import HTMLParser
 from gsites2md.HTML2mdConverter import HTML2mdConverter
 
@@ -20,12 +22,14 @@ class HTMLParser2md(HTMLParser):
 
         # Attribute to manage <a> tags
         self.href = None
+        self.a_data = None
 
     def handle_starttag(self, tag, attrs):
         self.last_tag_full_parsed = False
         html2md = ""
         if tag == "a":
             self.href = HTML2mdConverter.get_attribute_by_name(attrs, "href")
+            self.a_data = ""
         elif tag == "br":
             html2md = HTML2mdConverter.br(attrs)
         elif tag == "img":
@@ -49,7 +53,9 @@ class HTMLParser2md(HTMLParser):
         self.last_tag_full_parsed = True
 
         if tag == "a":
+            self.md += HTML2mdConverter.a(self.href, self.a_data)
             self.href = None
+            self.a_data = None
         elif tag == "ul" or tag == "ol":
             self.__pop_nested_list(tag)
             self.md += "\n"
@@ -57,9 +63,15 @@ class HTMLParser2md(HTMLParser):
             self.md += self.tr()
 
     def handle_data(self, data):
-        if data.replace(" ", "") != "\n":
+        # if data.replace(" ", "") != "\n":
+        if re.sub(r'\s+', "", data) != "":
+            # Manage nested content in <a> tag
+            if self.href is not None:
+                self.a_data += data
+                return
+
+            # Manage other tags
             switcher = {
-                "a": HTML2mdConverter.a(self.href, data),
                 "code": HTML2mdConverter.code(data),
                 "h1": HTML2mdConverter.h1(data),
                 "h2": HTML2mdConverter.h2(data),

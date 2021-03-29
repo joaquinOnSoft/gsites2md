@@ -1,6 +1,11 @@
+import re
+
+
 class HTML2mdConverter:
+
     @staticmethod
     def a(href: str, data: str) -> str:
+        data = re.sub(r'\s+', " ", data)
         return f'[{data}]({href})'
 
     @staticmethod
