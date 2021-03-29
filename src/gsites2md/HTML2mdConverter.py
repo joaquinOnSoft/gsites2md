@@ -87,14 +87,6 @@ class HTML2mdConverter:
         return meta
 
     @staticmethod
-    def td(data: str) -> str:
-        return data + " | "
-
-    @staticmethod
-    def tr(attrs: str) -> str:
-        return "\n| "
-
-    @staticmethod
     def var(data: str) -> str:
         """
         Manage <var>, <samp> and <kbd> tags.

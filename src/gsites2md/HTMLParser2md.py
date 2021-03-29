@@ -5,6 +5,23 @@ from gsites2md.HTML2mdConverter import HTML2mdConverter
 
 
 class HTMLParser2md(HTMLParser):
+    # Hyperlink tag: <a>
+    HTML_TAG_A = "a"
+    # Line break tag: <br>
+    HTML_TAG_BR = "br"
+    # Image tag: <img>
+    HTML_TAG_IMG = "img"
+    # Ordered list tag: <ol>
+    HTML_TAG_OL = "ol"
+    # Unordered list tag: <ul>
+    HTML_TAG_UL = "ul"
+    # Table data tag: <td>
+    HTML_TAG_TD = "td"
+    # Table header tag: <th>
+    HTML_TAG_TH = "th"
+    # Table row tag: <tr>
+    HTML_TAG_TR = "tr"
+
     def __init__(self):
         super().__init__()
         self.reset()
@@ -27,24 +44,25 @@ class HTMLParser2md(HTMLParser):
     def handle_starttag(self, tag, attrs):
         self.last_tag_full_parsed = False
         html2md = ""
-        if tag == "a":
+
+        if tag == self.HTML_TAG_A:
             self.href = HTML2mdConverter.get_attribute_by_name(attrs, "href")
             self.a_data = ""
-        elif tag == "br":
+        elif tag == self.HTML_TAG_BR:
             html2md = HTML2mdConverter.br(attrs)
-        elif tag == "img":
+        elif tag == self.HTML_TAG_IMG:
             html2md = HTML2mdConverter.img(attrs)
-        elif tag == "tr":
-            html2md = HTML2mdConverter.tr(attrs)
+        elif tag == self.HTML_TAG_TR:
+            html2md = "\n| "
             self.last_cell = None
             self.cell_in_row_counter = 0
-        elif tag == "th":
-            self.last_cell = "th"
+        elif tag == self.HTML_TAG_TH:
+            self.last_cell = self.HTML_TAG_TH
             self.cell_in_row_counter += 1
-        elif tag == "td":
-            self.last_cell = "td"
+        elif tag == self.HTML_TAG_TD:
+            self.last_cell = self.HTML_TAG_TD
             self.cell_in_row_counter += 1
-        elif tag == "ul" or tag == "ol":
+        elif tag == self.HTML_TAG_UL or tag == self.HTML_TAG_OL:
             self.__push_nested_list(tag)
 
         self.md += html2md
@@ -52,18 +70,19 @@ class HTMLParser2md(HTMLParser):
     def handle_endtag(self, tag):
         self.last_tag_full_parsed = True
 
-        if tag == "a":
+        if tag == self.HTML_TAG_A:
             self.md += HTML2mdConverter.a(self.href, self.a_data)
             self.href = None
             self.a_data = None
-        elif tag == "ul" or tag == "ol":
+        elif tag == self.HTML_TAG_UL or tag == self.HTML_TAG_OL:
             self.__pop_nested_list(tag)
             self.md += "\n"
-        elif tag == "tr":
+        elif tag == self.HTML_TAG_TD:
+            self.md += " | "
+        elif tag == self.HTML_TAG_TR:
             self.md += self.tr()
 
     def handle_data(self, data):
-        # if data.replace(" ", "") != "\n":
         if re.sub(r'\s+', "", data) != "":
             # Manage nested content in <a> tag
             if self.href is not None:
@@ -91,8 +110,6 @@ class HTMLParser2md(HTMLParser):
                 "script": HTML2mdConverter.ignore_tag(data),
                 "strong": HTML2mdConverter.strong(data),
                 "style": HTML2mdConverter.ignore_tag(data),
-                "td": HTML2mdConverter.td(data),
-                "th": HTML2mdConverter.td(data),
                 "title": HTML2mdConverter.title(data),
                 # The <var> tag is used to defines a variable in programming or
                 # in a mathematical expression. The content inside is typically displayed in italic.
@@ -134,11 +151,11 @@ class HTMLParser2md(HTMLParser):
             return ""
 
     def tr(self) -> str:
-        header = ""
+        table_row_md = ""
 
         if self.last_cell == "th":
             for x in range(self.cell_in_row_counter):
-                header += "| --- "
-            header = "\n" + header + "| "
+                table_row_md += "| --- "
+            table_row_md = "\n" + table_row_md + "| "
 
-        return header
+        return table_row_md

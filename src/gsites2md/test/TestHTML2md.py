@@ -33,7 +33,6 @@ class TestHTML2md(TestCase):
 
     def test_table_from_gsites(self):
         self.__process("test-table-from-gsites.html", "test-table-from-gsites.md")
-        self.__process("test-table-from-gsites.html", "test-table-from-gsites.md")
 
     # def test_fisica(self):
     #    self.__process("fiquipedia.es/recursos/fisica.html", "test-header.md")
