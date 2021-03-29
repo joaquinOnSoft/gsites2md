@@ -2,6 +2,9 @@ import re
 
 
 class HTML2mdConverter:
+    INDEX_TAG = 0
+    INDEX_ATTRIBUTE_NAME = 1
+    INDEX_ATTRIBUTE_VALUE = 2
 
     @staticmethod
     def a(href: str, data: str) -> str:
@@ -109,3 +112,23 @@ class HTML2mdConverter:
             if name == attr_name:
                 return value
         return ""
+
+    @staticmethod
+    def is_tag_ignored(tag: str, attrs) -> bool:
+        ignore = False
+        ignore_list = [
+            # Google sites header
+            ["table", "id", "sites-chrome-header"],
+            # Google sites comments area
+            ["div", "id", "sites-canvas-bottom-panel"],
+            # Google sites footer
+            ["div", "id", "sites-chrome-adminfooter-container"]
+        ]
+
+        for i_tag in ignore_list:
+            if i_tag[HTML2mdConverter.INDEX_TAG] == tag:
+                attr_value = HTML2mdConverter.get_attribute_by_name(attrs, i_tag[HTML2mdConverter.INDEX_ATTRIBUTE_NAME])
+                if i_tag[HTML2mdConverter.INDEX_ATTRIBUTE_VALUE] == attr_value:
+                    ignore = True
+
+        return ignore
