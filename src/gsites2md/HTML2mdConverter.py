@@ -116,6 +116,7 @@ class HTML2mdConverter:
     @staticmethod
     def is_tag_ignored(tag: str, attrs) -> bool:
         ignore = False
+        # Array that contains tag that must be ignored: Tag name, Attribute name, Attribute value
         ignore_list = [
             # Google sites header
             ["table", "id", "sites-chrome-header"],

@@ -54,4 +54,21 @@ class TestHTML2mdConverter(TestCase):
     def test_var(self):
         self.assertEqual("`File not found.`", HTML2mdConverter.var("File not found."))
 
+    def test_get_attribute_by_name(self):
+        attrs = [('src', 'my-image.png'), ('href', 'index.html')]
+        self.assertEqual("index.html", HTML2mdConverter.get_attribute_by_name(attrs, "href"))
+        self.assertEqual("", HTML2mdConverter.get_attribute_by_name(attrs, "href2"))
+
+    def test_is_tag_ignored(self):
+        attrs = [('style', 'font-color: red'), ('id', 'sites-chrome-header')]
+        self.assertTrue(HTML2mdConverter.is_tag_ignored("table", attrs))
+
+        attrs = [('style', 'font-color: red'), ('id', 'sites-canvas-bottom-panel')]
+        self.assertTrue(HTML2mdConverter.is_tag_ignored("div", attrs))
+
+        attrs = [('style', 'font-color: red'), ('id', 'sites-chrome-adminfooter-container')]
+        self.assertTrue(HTML2mdConverter.is_tag_ignored("div", attrs))
+
+        attrs = []
+        self.assertFalse(HTML2mdConverter.is_tag_ignored("div", attrs))
 
