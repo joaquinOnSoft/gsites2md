@@ -77,7 +77,7 @@ class HTMLParser2md(HTMLParser):
         elif tag == self.HTML_TAG_UL or tag == self.HTML_TAG_OL:
             self.__pop_nested_list(tag)
             self.md += "\n"
-        elif tag == self.HTML_TAG_TD:
+        elif tag == self.HTML_TAG_TD or tag == self.HTML_TAG_TH:
             self.md += " | "
         elif tag == self.HTML_TAG_TR:
             self.md += self.tr()
