@@ -69,6 +69,9 @@ class TestHTML2mdConverter(TestCase):
         attrs = [('style', 'font-color: red'), ('id', 'sites-chrome-adminfooter-container')]
         self.assertTrue(HTML2mdConverter.is_tag_ignored("div", attrs))
 
+        attrs = [('style', 'font-color: red'), ('id', 'my-table')]
+        self.assertFalse(HTML2mdConverter.is_tag_ignored("table", attrs))
+
         attrs = []
         self.assertFalse(HTML2mdConverter.is_tag_ignored("div", attrs))
 

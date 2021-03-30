@@ -9,18 +9,36 @@ class HTMLParser2md(HTMLParser):
     HTML_TAG_A = "a"
     # Line break tag: <br>
     HTML_TAG_BR = "br"
+    # Header leve 1: <h1>
+    HTML_TAG_H1 = "h1"
+    # Header leve 2: <h2>
+    HTML_TAG_H2 = "h2"
+    # Header leve 3: <h3>
+    HTML_TAG_H3 = "h3"
+    # Header leve 4: <h4>
+    HTML_TAG_H4 = "h4"
+    # Header leve 5: <h5>
+    HTML_TAG_H5 = "h5"
+    # Header leve 6: <h6>
+    HTML_TAG_H6 = "h6"
+    # Header leve 7: <h7>
+    HTML_TAG_H7 = "h7"
+    # Header leve 8: <h8>
+    HTML_TAG_H8 = "h8"
     # Image tag: <img>
     HTML_TAG_IMG = "img"
-    # Ordered list tag: <ol>
+    # List item tag: <li>
+    HTML_TAG_LI = "li"
+    # Table data tag: <td>
     HTML_TAG_OL = "ol"
-    # Unordered list tag: <ul>
-    HTML_TAG_UL = "ul"
     # Table data tag: <td>
     HTML_TAG_TD = "td"
     # Table header tag: <th>
     HTML_TAG_TH = "th"
     # Table row tag: <tr>
     HTML_TAG_TR = "tr"
+    # Unordered list tag: <ul>
+    HTML_TAG_UL = "ul"
 
     def __init__(self):
         super().__init__()
@@ -41,17 +59,48 @@ class HTMLParser2md(HTMLParser):
         self.href = None
         self.a_data = None
 
+        # Ignore mode (some tags like header, footer, comments section will be ignored)
+        self.ignore_tags = False
+        self.ignore_tags_counter = 0
+
     def handle_starttag(self, tag, attrs):
         self.last_tag_full_parsed = False
         html2md = ""
+
+        if HTML2mdConverter.is_tag_ignored(tag, attrs):
+            self.ignore_tags = True
+
+        if self.ignore_tags:
+            self.ignore_tags_counter += 1
+            return
 
         if tag == self.HTML_TAG_A:
             self.href = HTML2mdConverter.get_attribute_by_name(attrs, "href")
             self.a_data = ""
         elif tag == self.HTML_TAG_BR:
-            html2md = HTML2mdConverter.br(attrs)
+            # Ignore <br> inside a table cell
+            if self.last_cell is None:
+                html2md = HTML2mdConverter.br(attrs)
+        elif tag == self.HTML_TAG_H1:
+            html2md = HTML2mdConverter.H1
+        elif tag == self.HTML_TAG_H2:
+            html2md = HTML2mdConverter.H2
+        elif tag == self.HTML_TAG_H3:
+            html2md = HTML2mdConverter.H3
+        elif tag == self.HTML_TAG_H4:
+            html2md = HTML2mdConverter.H4
+        elif tag == self.HTML_TAG_H5:
+            html2md = HTML2mdConverter.H5
+        elif tag == self.HTML_TAG_H6:
+            html2md = HTML2mdConverter.H6
+        elif tag == self.HTML_TAG_H7:
+            html2md = HTML2mdConverter.H7
+        elif tag == self.HTML_TAG_H8:
+            html2md = HTML2mdConverter.H8
         elif tag == self.HTML_TAG_IMG:
             html2md = HTML2mdConverter.img(attrs)
+        elif tag == self.HTML_TAG_LI:
+            html2md = self.li()
         elif tag == self.HTML_TAG_TR:
             html2md = "\n| "
             self.last_cell = None
@@ -70,12 +119,20 @@ class HTMLParser2md(HTMLParser):
     def handle_endtag(self, tag):
         self.last_tag_full_parsed = True
 
+        if self.ignore_tags:
+            self.ignore_tags_counter -= 1
+            if self.ignore_tags_counter == 0:
+                self.ignore_tags = False
+            return
+
         if tag == self.HTML_TAG_A:
             self.md += HTML2mdConverter.a(self.href, self.a_data)
             self.href = None
             self.a_data = None
-        elif tag == self.HTML_TAG_UL or tag == self.HTML_TAG_OL:
-            self.__pop_nested_list(tag)
+        elif tag == self.HTML_TAG_H1 or tag == self.HTML_TAG_H2 or tag == self.HTML_TAG_H3 or tag == self.HTML_TAG_H4 or tag == self.HTML_TAG_H5 or tag == self.HTML_TAG_H6 or tag == self.HTML_TAG_H7 or tag == self.HTML_TAG_H8:
+            self.md += "\n"
+        elif tag == self.HTML_TAG_OL or tag == self.HTML_TAG_UL:
+            self.__pop_nested_list()
             self.md += "\n"
         elif tag == self.HTML_TAG_TD or tag == self.HTML_TAG_TH:
             self.md += " | "
@@ -83,6 +140,9 @@ class HTMLParser2md(HTMLParser):
             self.md += self.tr()
 
     def handle_data(self, data):
+        if self.ignore_tags:
+            return
+
         if re.sub(r'\s+', "", data) != "":
             # Manage nested content in <a> tag
             if self.href is not None:
@@ -91,22 +151,15 @@ class HTMLParser2md(HTMLParser):
 
             # Manage other tags
             switcher = {
+                "b": HTML2mdConverter.strong(data),
                 "code": HTML2mdConverter.code(data),
-                "h1": HTML2mdConverter.h1(data),
-                "h2": HTML2mdConverter.h2(data),
-                "h3": HTML2mdConverter.h3(data),
-                "h4": HTML2mdConverter.h4(data),
-                "h5": HTML2mdConverter.h5(data),
-                "h6": HTML2mdConverter.h6(data),
-                "h7": HTML2mdConverter.h7(data),
-                "h8": HTML2mdConverter.h8(data),
                 "i": HTML2mdConverter.i(data),
                 # <kbd> defines some text as keyboard input in a document:
                 "kbd": HTML2mdConverter.var(data),
-                "li": self.li(data),
+                "li": data.strip(),
                 "pre": HTML2mdConverter.code(data),
                 # <samp> defines some text as sample output from a computer program in a document
-                "sampl": HTML2mdConverter.var(data),
+                "samp": HTML2mdConverter.var(data),
                 "script": HTML2mdConverter.ignore_tag(data),
                 "strong": HTML2mdConverter.strong(data),
                 "style": HTML2mdConverter.ignore_tag(data),
@@ -130,23 +183,21 @@ class HTMLParser2md(HTMLParser):
     def __push_nested_list(self, tag: str):
         self.nested_list.append(tag)
 
-    def __pop_nested_list(self, tag: str) -> str:
+    def __pop_nested_list(self) -> str:
         return self.nested_list.pop()
 
-    def li(self, data: str) -> str:
-        data = data.strip()
-
+    def li(self) -> str:
         size = len(self.nested_list)
         if size > 0:
-            filler = ""
+            filler = "\n"
             for step in range(size):
                 filler += "   "
 
             last_list_tag = self.nested_list[-1]
             if last_list_tag == "ul":
-                return filler + "* " + data + "\n"
+                return filler + "* "
             elif last_list_tag == "ol":
-                return filler + "1. " + data + "\n"
+                return filler + "1. "
         else:
             return ""
 

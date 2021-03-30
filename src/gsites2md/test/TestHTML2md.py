@@ -34,8 +34,17 @@ class TestHTML2md(TestCase):
     def test_table_from_gsites(self):
         self.__process("test-table-from-gsites.html", "test-table-from-gsites.md")
 
-    def test_fisica(self):
-        self.__process("fiquipedia.es/recursos/fisica.html", "test-header.md")
+    # def test_fisica(self):
+    #    self.__process("fiquipedia.es/recursos/fisica.html", "test-header.md")
+
+    def test_pau_fisica(self):
+        self.__process("fiquipedia.es/pruebasaccesouniversidad/paufisica.html", "test-header.md")
+
+    def test_ignore_gsites_header(self):
+        self.__process("test-ignore-gsites-header.html", "test-ignore-gsites-header.md")
+
+    def test_ignore_gsites_footer(self):
+        self.__process("test-ignore-gsites-footer.html", "test-ignore-gsites-footer.md")
 
     def __process(self, input_file_name: str, output_file_name: str):
         input_file_name = self.base_path + input_file_name

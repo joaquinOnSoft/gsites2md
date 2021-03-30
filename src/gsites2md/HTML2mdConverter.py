@@ -2,13 +2,25 @@ import re
 
 
 class HTML2mdConverter:
+    H1 = "\n# "
+    H2 = "\n## "
+    H3 = "\n### "
+    H4 = "\n#### "
+    H5 = "\n##### "
+    H6 = "\n###### "
+    H7 = "\n####### "
+    H8 = "\n######## "
+
     INDEX_TAG = 0
     INDEX_ATTRIBUTE_NAME = 1
     INDEX_ATTRIBUTE_VALUE = 2
 
     @staticmethod
     def a(href: str, data: str) -> str:
-        data = re.sub(r'\s+', " ", data)
+        if data:
+            data = re.sub(r'\s+', " ", data)
+        else:
+            data = ""
         return f'[{data}]({href})'
 
     @staticmethod
@@ -115,11 +127,23 @@ class HTML2mdConverter:
 
     @staticmethod
     def is_tag_ignored(tag: str, attrs) -> bool:
+        """
+        Check if the and specific tag + its attributes must be ignored or not.
+        These are the tags included by Google Sites that will be mark to be ignored:
+           - Google sites header: `<table id="sites-chrome-header">
+           - Google sites comments area: `<div id="sites-canvas-bottom-panel">`
+           - Google sites footer: `<div id="sites-chrome-adminfooter-container">`
+        :param tag: Tag name
+        :param attrs: Tag's attributes list (key - value pairs)
+        :return: True if the tag must be ignored, False in other case
+        """
         ignore = False
         # Array that contains tag that must be ignored: Tag name, Attribute name, Attribute value
         ignore_list = [
             # Google sites header
             ["table", "id", "sites-chrome-header"],
+            # Google sites breadcrumbs
+            ["div", "id", "title-crumbs"],
             # Google sites comments area
             ["div", "id", "sites-canvas-bottom-panel"],
             # Google sites footer

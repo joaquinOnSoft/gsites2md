@@ -11,6 +11,6 @@ class TestHTMLParser2md(TestCase):
 
     def test_li(self):
         self.parser.nested_list.append("ul")
-        self.assertEqual("   * Hello\n", self.parser.li("Hello"))
+        self.assertEqual("\n   * ", self.parser.li())
         self.parser.nested_list.append("ol")
-        self.assertEqual("      1. Hello\n", self.parser.li("Hello"))
+        self.assertEqual("\n      1. ", self.parser.li())
