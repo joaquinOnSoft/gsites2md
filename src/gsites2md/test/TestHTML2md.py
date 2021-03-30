@@ -32,13 +32,18 @@ class TestHTML2md(TestCase):
         self.__process("test-table.html", "test-table.md")
 
     def test_table_from_gsites(self):
+        """
+        Test the conversion of a HTML that includes `rowspand` and `cellspand` attributes.
+        Those attributes are not supported by Markdown, so the conversion is not perfect :-(
+        :return:
+        """
         self.__process("test-table-from-gsites.html", "test-table-from-gsites.md")
 
-    # def test_fisica(self):
-    #    self.__process("fiquipedia.es/recursos/fisica.html", "test-header.md")
+    def test_table_of_hell(self):
+        self.__process("test-table-of-hell.html", "test-table-of-hell.md")
 
-    def test_pau_fisica(self):
-        self.__process("fiquipedia.es/pruebasaccesouniversidad/paufisica.html", "test-header.md")
+    # def test_pau_fisica(self):
+    #    self.__process("fiquipedia.es/pruebasaccesouniversidad/paufisica.html", "test-header.md")
 
     def test_ignore_gsites_header(self):
         self.__process("test-ignore-gsites-header.html", "test-ignore-gsites-header.md")

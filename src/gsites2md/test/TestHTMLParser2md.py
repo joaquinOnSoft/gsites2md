@@ -14,3 +14,18 @@ class TestHTMLParser2md(TestCase):
         self.assertEqual("\n   * ", self.parser.li())
         self.parser.nested_list.append("ol")
         self.assertEqual("\n      1. ", self.parser.li())
+
+    def test_img(self):
+        attrs = [("src", "img/fiquipedia.png"), ("alt", "Fiquipedia logo")]
+        self.assertEqual("![Fiquipedia logo](img/fiquipedia.png)\n", self.parser.img(attrs))
+
+        # The image is inside a link
+        self.parser.href = "htt://www.fiquipedia.es"
+        self.assertEqual("", self.parser.img(attrs))
+
+    def test_md(self):
+        md = "---\n\n|  | \n### Recursos\n |  | \n"
+        self.parser.md = md
+
+        md_cleaned = "---\n### Recursos\n"
+        self.assertEqual(md_cleaned, self.parser.md)

@@ -2,14 +2,14 @@ import re
 
 
 class HTML2mdConverter:
-    H1 = "\n# "
-    H2 = "\n## "
-    H3 = "\n### "
-    H4 = "\n#### "
-    H5 = "\n##### "
-    H6 = "\n###### "
-    H7 = "\n####### "
-    H8 = "\n######## "
+    H1 = "\n\n# "
+    H2 = "\n\n## "
+    H3 = "\n\n### "
+    H4 = "\n\n#### "
+    H5 = "\n\n##### "
+    H6 = "\n\n###### "
+    H7 = "\n\n####### "
+    H8 = "\n\n######## "
 
     INDEX_TAG = 0
     INDEX_ATTRIBUTE_NAME = 1
@@ -45,35 +45,35 @@ class HTML2mdConverter:
 
     @staticmethod
     def h1(data: str) -> str:
-        return "\n# " + data + "\n"
+        return "\n\n# " + data + "\n"
 
     @staticmethod
     def h2(data: str) -> str:
-        return "\n## " + data + "\n"
+        return "\n\n## " + data + "\n"
 
     @staticmethod
     def h3(data: str) -> str:
-        return "\n### " + data + "\n"
+        return "\n\n### " + data + "\n"
 
     @staticmethod
     def h4(data: str) -> str:
-        return "\n#### " + data + "\n"
+        return "\n\n#### " + data + "\n"
 
     @staticmethod
     def h5(data: str) -> str:
-        return "\n##### " + data + "\n"
+        return "\n\n##### " + data + "\n"
 
     @staticmethod
     def h6(data: str) -> str:
-        return "\n###### " + data + "\n"
+        return "\n\n###### " + data + "\n"
 
     @staticmethod
     def h7(data: str) -> str:
-        return "\n####### " + data + "\n"
+        return "\n\n####### " + data + "\n"
 
     @staticmethod
     def h8(data: str) -> str:
-        return "\n######## " + data + "\n"
+        return "\n\n######## " + data + "\n"
 
     @staticmethod
     def i(data: str) -> str:
@@ -147,6 +147,8 @@ class HTML2mdConverter:
             # Google sites comments area
             ["div", "id", "sites-canvas-bottom-panel"],
             # Google sites footer
+            ["div", "id", "sites-chrome-footer"],
+            # Google sites admin footer
             ["div", "id", "sites-chrome-adminfooter-container"]
         ]
 

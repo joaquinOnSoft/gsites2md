@@ -31,6 +31,8 @@ class HTMLParser2md(HTMLParser):
     HTML_TAG_LI = "li"
     # Table data tag: <td>
     HTML_TAG_OL = "ol"
+    # Paragraph tag: <p>
+    HTML_TAG_P = "p"
     # Table data tag: <td>
     HTML_TAG_TD = "td"
     # Table header tag: <th>
@@ -43,7 +45,7 @@ class HTMLParser2md(HTMLParser):
     def __init__(self):
         super().__init__()
         self.reset()
-        self.md = ""
+        self._md = ""
 
         # Attribute to manage nested lists
         self.nested_list = []
@@ -62,6 +64,16 @@ class HTMLParser2md(HTMLParser):
         # Ignore mode (some tags like header, footer, comments section will be ignored)
         self.ignore_tags = False
         self.ignore_tags_counter = 0
+
+    @property
+    def md(self):
+        # Google Sites generates the page's content inside a table
+        # We just remove this markdown tag
+        return re.sub(r'^(\s+\|  \| \n)', "\n", self._md)
+
+    @md.setter
+    def md(self, m):
+        self._md = m
 
     def handle_starttag(self, tag, attrs):
         self.last_tag_full_parsed = False
@@ -98,7 +110,7 @@ class HTMLParser2md(HTMLParser):
         elif tag == self.HTML_TAG_H8:
             html2md = HTML2mdConverter.H8
         elif tag == self.HTML_TAG_IMG:
-            html2md = HTML2mdConverter.img(attrs)
+            html2md = self.img(attrs)
         elif tag == self.HTML_TAG_LI:
             html2md = self.li()
         elif tag == self.HTML_TAG_TR:
@@ -114,7 +126,7 @@ class HTMLParser2md(HTMLParser):
         elif tag == self.HTML_TAG_UL or tag == self.HTML_TAG_OL:
             self.__push_nested_list(tag)
 
-        self.md += html2md
+        self._md += html2md
 
     def handle_endtag(self, tag):
         self.last_tag_full_parsed = True
@@ -126,18 +138,20 @@ class HTMLParser2md(HTMLParser):
             return
 
         if tag == self.HTML_TAG_A:
-            self.md += HTML2mdConverter.a(self.href, self.a_data)
+            self._md += HTML2mdConverter.a(self.href, self.a_data)
             self.href = None
             self.a_data = None
         elif tag == self.HTML_TAG_H1 or tag == self.HTML_TAG_H2 or tag == self.HTML_TAG_H3 or tag == self.HTML_TAG_H4 or tag == self.HTML_TAG_H5 or tag == self.HTML_TAG_H6 or tag == self.HTML_TAG_H7 or tag == self.HTML_TAG_H8:
-            self.md += "\n"
+            self._md += "\n"
         elif tag == self.HTML_TAG_OL or tag == self.HTML_TAG_UL:
             self.__pop_nested_list()
-            self.md += "\n"
+            self._md += "\n"
+        elif tag == self.HTML_TAG_P:
+            self._md += self.p()
         elif tag == self.HTML_TAG_TD or tag == self.HTML_TAG_TH:
-            self.md += " | "
+            self._md += " | "
         elif tag == self.HTML_TAG_TR:
-            self.md += self.tr()
+            self._md += self.tr()
 
     def handle_data(self, data):
         if self.ignore_tags:
@@ -148,6 +162,8 @@ class HTMLParser2md(HTMLParser):
             if self.href is not None:
                 self.a_data += data
                 return
+
+            data = re.sub(r'\s+', " ", data)
 
             # Manage other tags
             switcher = {
@@ -175,7 +191,7 @@ class HTMLParser2md(HTMLParser):
             else:
                 html2md = switcher.get(self.lasttag, HTML2mdConverter.default_tag(data))
 
-            self.md += html2md
+            self._md += html2md
 
     def error(self, message):
         print(message)
@@ -204,9 +220,27 @@ class HTMLParser2md(HTMLParser):
     def tr(self) -> str:
         table_row_md = ""
 
-        if self.last_cell == "th":
+        if self.last_cell == self.HTML_TAG_TH:
             for x in range(self.cell_in_row_counter):
                 table_row_md += "| --- "
             table_row_md = "\n" + table_row_md + "| "
 
         return table_row_md
+
+    def img(self, attrs):
+        img = HTML2mdConverter.img(attrs)
+
+        if self.href:
+            self.a_data = img
+            img = ""
+
+        return img
+
+    def p(self):
+        md = ""
+        # Don't add a line break inside a table cell
+        if self.last_cell is None:
+            md = "\n"
+        return md
+
+
