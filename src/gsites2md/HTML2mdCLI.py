@@ -12,7 +12,7 @@ def print_help():
     print('where:')
     print('\t-h, --help: Print this help')
     print('\t-s, --source: (Mandatory) source file or folder')
-    print('\t-d, --dest: (Optional) destination file or folder')
+    print('\t-d, --dest: (Mandatory) destination file or folder')
 
 
 def main(argv):
@@ -34,17 +34,13 @@ def main(argv):
         elif opt in ("-d", "--dest"):
             destination = arg
 
-    if source:
-        if os.path.isfile(source):
-            if destination is None:
-                destination = source + ".md"
-
+    if source and destination:
+        if os.path.isfile(source) or (os.path.isdir(source) and os.path.isdir(destination)):
             parser = HTML2md()
             parser.process(source, destination)
         else:
-            pass
-        # for path in Path(source).rglob('*.html'):
-        #    print(path.absolute())
+            print("\nWARNING: Source and Destination must be both files or both folders\n")
+            sys.exit(2)
     else:
         print_help()
 
