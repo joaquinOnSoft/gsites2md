@@ -6,8 +6,14 @@ from ..HTML2mdConverter import HTML2mdConverter
 class TestHTML2mdConverter(TestCase):
 
     def test_a(self):
-        self.assertEqual("[Fiquipedia](http://fiquipedia.es)", HTML2mdConverter.a("http://fiquipedia.es", "Fiquipedia"))
-        self.assertEqual("[Fiquipedia is cool](http://fiquipedia.es)", HTML2mdConverter.a("http://fiquipedia.es", "Fiquipedia \n\n\t is cool"))
+        self.assertEqual("[Fiquipedia](/)", HTML2mdConverter.a("https://fiquipedia.es", "Fiquipedia"))
+        self.assertEqual("[Fiquipedia](/)", HTML2mdConverter.a("https://www.fiquipedia.es", "Fiquipedia"))
+        self.assertEqual("[Fiquipedia](/)", HTML2mdConverter.a("http://fiquipedia.es", "Fiquipedia"))
+        self.assertEqual("[Fiquipedia](/)", HTML2mdConverter.a("http://www.fiquipedia.es", "Fiquipedia"))
+        self.assertEqual("[Fiquipedia is cool](/)",
+                         HTML2mdConverter.a("http://fiquipedia.es", "Fiquipedia \n\n\t is cool"))
+        self.assertEqual("[Recursos](/recursos)", HTML2mdConverter.a("/recursos", "Recursos"))
+        self.assertEqual("[Github](http://www.github.com)", HTML2mdConverter.a("http://www.github.com", "Github"))
 
     def test_blockquote(self):
         quote = "This is the AK-47 assault rifle, \nthe preferred weapon of your enemy;"

@@ -22,6 +22,15 @@ class HTML2mdConverter:
         else:
             data = ""
 
+        href = href.replace("http://fiquipedia.es", "") \
+            .replace("http://www.fiquipedia.es", "") \
+            .replace("https://fiquipedia.es", "") \
+            .replace("https://www.fiquipedia.es", "") \
+            .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "")
+
+        if href == "":
+            href = "/"
+
         return f'[{data}]({href})'
 
     @staticmethod
