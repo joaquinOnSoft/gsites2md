@@ -66,6 +66,9 @@ class HTMLParser2md(HTMLParser):
         self.ignore_tags = False
         self.ignore_tags_counter = 0
 
+        # List with all the links found in the page
+        self.links = []
+
     @property
     def md(self):
         # Google Sites generates the page's content inside a table
@@ -73,8 +76,8 @@ class HTMLParser2md(HTMLParser):
         return re.sub(r'^(\s+\|  \| \n)', "\n", self._md, flags=re.MULTILINE)
 
     @md.setter
-    def md(self, m):
-        self._md = m
+    def md(self, markdown):
+        self._md = markdown
 
     def handle_starttag(self, tag, attrs):
         self.last_tag_full_parsed = False
@@ -90,6 +93,7 @@ class HTMLParser2md(HTMLParser):
         if tag == self.HTML_TAG_A:
             self.href = HTML2mdConverter.get_attribute_by_name(attrs, "href")
             self.a_data = ""
+            self.links.append(self.href)
         elif tag == self.HTML_TAG_BR:
             # Ignore <br> inside a table cell
             if self.last_cell is None:

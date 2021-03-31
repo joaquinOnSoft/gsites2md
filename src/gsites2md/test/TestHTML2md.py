@@ -55,9 +55,8 @@ class TestHTML2md(TestCase):
         input_file_name = self.base_path + input_file_name
         output_file_name = self.base_path + output_file_name
 
-        generated_output_file_name = HTML2md.process(input_file_name, input_file_name + ".md")
-
-        self.assertIsNotNone(generated_output_file_name)
+        generated_output_file_name = input_file_name + ".md"
+        HTML2md.process(input_file_name, generated_output_file_name)
 
         expected_output = TestHTML2md.read_file(output_file_name)
         generated_output = TestHTML2md.read_file(generated_output_file_name)
