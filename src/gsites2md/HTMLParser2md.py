@@ -60,6 +60,7 @@ class HTMLParser2md(HTMLParser):
         # Attribute to manage <a> tags
         self.href = None
         self.a_data = None
+        self.a_data = None
 
         # Ignore mode (some tags like header, footer, comments section will be ignored)
         self.ignore_tags = False
@@ -69,7 +70,7 @@ class HTMLParser2md(HTMLParser):
     def md(self):
         # Google Sites generates the page's content inside a table
         # We just remove this markdown tag
-        return re.sub(r'^(\s+\|  \| \n)', "\n", self._md)
+        return re.sub(r'^(\s+\|  \| \n)', "\n", self._md, flags=re.MULTILINE)
 
     @md.setter
     def md(self, m):

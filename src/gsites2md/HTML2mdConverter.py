@@ -21,6 +21,7 @@ class HTML2mdConverter:
             data = re.sub(r'\s+', " ", data)
         else:
             data = ""
+
         return f'[{data}]({href})'
 
     @staticmethod

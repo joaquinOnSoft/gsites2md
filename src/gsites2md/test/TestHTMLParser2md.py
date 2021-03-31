@@ -27,5 +27,5 @@ class TestHTMLParser2md(TestCase):
         md = "---\n\n|  | \n### Recursos\n |  | \n"
         self.parser.md = md
 
-        md_cleaned = "---\n### Recursos\n"
+        md_cleaned = "---\n\n### Recursos\n\n"
         self.assertEqual(md_cleaned, self.parser.md)
