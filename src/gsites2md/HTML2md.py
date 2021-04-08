@@ -16,7 +16,8 @@ class HTML2md:
         Convert and HTML file or folder (with all their nested files) in a Markdown file.
         :param input_name: Input file/folder name
         :param output_name: Output file/folder name.
-        :param replace_google_drive_links: Flag: Replace Google Drive links to local links (It'll download.py the content)')
+        :param replace_google_drive_links: Flag: Replace Google Drive links to local links
+        (It'll download the content)')
         """
         if os.path.isfile(input_name):
             links = HTML2md.__process_file(input_name, output_name)
