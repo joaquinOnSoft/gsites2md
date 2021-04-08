@@ -13,7 +13,7 @@ def print_help():
     print('\t-h, --help: Print this help')
     print('\t-s, --source <source_path>: (Mandatory) source file or folder')
     print('\t-d, --dest <dest_path>: (Mandatory) destination file or folder')
-    print('\t-r, --replace : (Optional) Flag: Replace Google Drive links to local links (It\'ll download the content)')
+    print('\t-r, --replace : (Optional) Flag: Replace Google Drive links to local links (It\'ll download.py the content)')
 
 
 def main(argv):
