@@ -47,16 +47,20 @@ class GoogleDriveWrapper:
     def download_file_from_url(self, file_url: str, path: str) -> str:
         """
         Download a shared file from Google Drive and download a copy to the local path defined
+
         :param file_url: A google Drive URL to a shared file that looks like this
         https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing
         :param path: Local path to store the downloaded file
         :return:
         """
-        file_id = GoogleDriveWrapper.download_file_from_url(file_url)
+        downloaded_file_full_path = None
+        file_id = GoogleDriveWrapper.get_file_id_from_url(file_url)
         if file_id:
             file_name = self.get_file_name(file_id)
             if file_name:
-                self.download_file(file_id, path, file_name)
+                downloaded_file_full_path = self.download_file_from_id(file_id, path, file_name)
+
+        return downloaded_file_full_path
 
     @staticmethod
     def get_file_id_from_url(file_url: str) -> str:
@@ -70,6 +74,7 @@ class GoogleDriveWrapper:
     def get_file_name(self, file_id) -> str:
         """
         Recover the original file name from a Google Drive Identifier
+
         :param file_id: Google Drive identifier
         :return: File name or None if not found
         """
@@ -80,7 +85,7 @@ class GoogleDriveWrapper:
 
         return file_name
 
-    def download_file(self, file_id: str, path: str, file_name: str):
+    def download_file_from_id(self, file_id: str, path: str, file_name: str) -> str:
         request = self.service.files().get_media(fileId=file_id, fields="files(id, name)")
         # items = request.get('files', [])
         # print(items)
@@ -91,10 +96,13 @@ class GoogleDriveWrapper:
         done = False
         while done is False:
             status, done = downloader.next_chunk()
-            print("Download %d%%." % int(status.progress() * 100))
+            print("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
 
         # The file has been downloaded into RAM, now save it in a file
         # https://stackoverflow.com/questions/60111361/how-to-download-a-file-from-google-drive-using-python-and-the-drive-api-v3
+        downloaded_file_path = os.path.join(path, file_name)
         fh.seek(0)
         with open(path + file_name, 'wb') as f:
             shutil.copyfileobj(fh, f)
+
+        return downloaded_file_path
