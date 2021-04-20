@@ -96,7 +96,9 @@ class HTMLParser2md(HTMLParser):
             self.ignore_tags = True
 
         if self.ignore_tags:
-            self.ignore_tags_counter += 1
+            # <input> tags are not closed on  google site header
+            if tag != "input":
+                self.ignore_tags_counter += 1
             return
 
         if tag == self.HTML_TAG_A:
