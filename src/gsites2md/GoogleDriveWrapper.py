@@ -51,7 +51,7 @@ class GoogleDriveWrapper:
         :param file_url: A google Drive URL to a shared file that looks like this
         https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing
         :param path: Local path to store the downloaded file
-        :return:
+        :return: Local path of the file downloaded
         """
         downloaded_file_full_path = None
         file_id = GoogleDriveWrapper.get_file_id_from_url(file_url)
