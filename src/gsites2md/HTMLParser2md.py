@@ -109,6 +109,8 @@ class HTMLParser2md(HTMLParser):
             if self.replace_google_drive_links and \
                     self.href is not None and \
                     self.href.startswith("https://drive.google.com"):
+
+                # TODO manage folder URLS, looks like this: 'https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0'
                 g_drive_file_downloaded = self.g_drive.download_file_from_url(self.href, self.downloads)
                 head, tail = ntpath.split(g_drive_file_downloaded)
                 self.href = "/downloads/" + tail

@@ -48,8 +48,9 @@ class GoogleDriveWrapper:
         """
         Download a shared file from Google Drive and download a copy to the local path defined
 
-        :param file_url: A google Drive URL to a shared file that looks like this
+        :param file_url: A google Drive URL to a shared file that looks like this for files
         https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing
+        and like this for folders https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0
         :param path: Local path to store the downloaded file
         :return: Local path of the file downloaded
         """
