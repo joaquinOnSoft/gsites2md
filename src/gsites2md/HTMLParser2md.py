@@ -1,7 +1,9 @@
 import re
+import ntpath
 
 from html.parser import HTMLParser
 from gsites2md.HTML2mdConverter import HTML2mdConverter
+from gsites2md.GoogleDriveWrapper import GoogleDriveWrapper
 
 
 class HTMLParser2md(HTMLParser):
@@ -42,8 +44,15 @@ class HTMLParser2md(HTMLParser):
     # Unordered list tag: <ul>
     HTML_TAG_UL = "ul"
 
-    def __init__(self):
+    def __init__(self, replace_google_drive_links: bool = False, downloads: str = '.'):
         super().__init__()
+
+        self.replace_google_drive_links = replace_google_drive_links
+        self.downloads = downloads
+
+        if replace_google_drive_links:
+            self.g_drive = GoogleDriveWrapper()
+
         self.reset()
         self._md = ""
 
@@ -93,6 +102,15 @@ class HTMLParser2md(HTMLParser):
         if tag == self.HTML_TAG_A:
             self.href = HTML2mdConverter.get_attribute_by_name(attrs, "href")
             self.a_data = ""
+
+            # Manage Google Drive links. Download the file and replace the link for a a local reference
+            if self.replace_google_drive_links and \
+                    self.href is not None and \
+                    self.href.startswith("https://drive.google.com"):
+                g_drive_file_downloaded = self.g_drive.download_file_from_url(self.href, self.downloads)
+                head, tail = ntpath.split(g_drive_file_downloaded)
+                self.href = "/downloads/" + tail
+
             self.links.append(self.href)
         elif tag == self.HTML_TAG_BR:
             # Ignore <br> inside a table cell
@@ -146,7 +164,10 @@ class HTMLParser2md(HTMLParser):
             self._md += HTML2mdConverter.a(self.href, self.a_data)
             self.href = None
             self.a_data = None
-        elif tag == self.HTML_TAG_H1 or tag == self.HTML_TAG_H2 or tag == self.HTML_TAG_H3 or tag == self.HTML_TAG_H4 or tag == self.HTML_TAG_H5 or tag == self.HTML_TAG_H6 or tag == self.HTML_TAG_H7 or tag == self.HTML_TAG_H8:
+        elif tag == self.HTML_TAG_H1 or tag == self.HTML_TAG_H2 or \
+                tag == self.HTML_TAG_H3 or tag == self.HTML_TAG_H4 or \
+                tag == self.HTML_TAG_H5 or tag == self.HTML_TAG_H6 or \
+                tag == self.HTML_TAG_H7 or tag == self.HTML_TAG_H8:
             self._md += "\n"
         elif tag == self.HTML_TAG_OL or tag == self.HTML_TAG_UL:
             self.__pop_nested_list()
@@ -247,5 +268,3 @@ class HTMLParser2md(HTMLParser):
         if self.last_cell is None:
             md = "\n"
         return md
-
-

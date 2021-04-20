@@ -19,7 +19,8 @@ def print_help():
 def main(argv):
     source = None
     destination = None
-    replace = False
+    replace_google_drive_links = False
+    downloads = "."
 
     try:
         opts, args = getopt.getopt(argv, "hs:d:r", ["help", "source=", "dest=", "replace"])
@@ -36,12 +37,19 @@ def main(argv):
         elif opt in ("-d", "--dest"):
             destination = arg
         elif opt in ("-r", "--replace"):
-            replace = True
+            replace_google_drive_links = True
 
     if source and destination:
         if os.path.isfile(source) or (os.path.isdir(source) and os.path.isdir(destination)):
+
+            # Check if "downloads" folder exits under "destination" folder
+            if os.path.isdir(destination):
+                downloads = os.path.join(destination, "downloads")
+                if os.path.isdir(downloads) is False:
+                    os.mkdir(downloads)
+
             parser = HTML2md()
-            parser.process(source, destination, replace)
+            parser.process(source, destination, replace_google_drive_links, downloads)
         else:
             print("\nWARNING: Source and Destination must be both files or both folders\n")
             sys.exit(2)
