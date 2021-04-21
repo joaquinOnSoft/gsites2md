@@ -9,6 +9,9 @@ class TestGoogleDriveWrapper(unittest.TestCase):
     FILE_ID = '1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY'
     FILE_NAME = 'openimaj-tutorial-pdf.pdf'
 
+    GOOGLE_DRIVE_FILE_URL = "https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing"
+    GOOGLE_DRIVE_FOLDER_URL = "https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0"
+
     def setUp(self) -> None:
         super().setUp()
         self.wrapper = GoogleDriveWrapper()
@@ -35,3 +38,13 @@ class TestGoogleDriveWrapper(unittest.TestCase):
 
         self.assertIsNotNone(file_name)
         self.assertEqual(self.FILE_NAME, file_name)
+
+    def test_is_file_url(self):
+        self.assertTrue(self.wrapper.is_file_url(TestGoogleDriveWrapper.GOOGLE_DRIVE_FILE_URL))
+        self.assertFalse(self.wrapper.is_file_url("https://www.fiquipedia.es"))
+        self.assertFalse(self.wrapper.is_file_url(TestGoogleDriveWrapper.GOOGLE_DRIVE_FOLDER_URL))
+
+    def test_is_folder_url(self):
+        self.assertTrue(self.wrapper.is_folder_url(TestGoogleDriveWrapper.GOOGLE_DRIVE_FOLDER_URL))
+        self.assertFalse(self.wrapper.is_folder_url("https://www.fiquipedia.es"))
+        self.assertFalse(self.wrapper.is_folder_url(TestGoogleDriveWrapper.GOOGLE_DRIVE_FILE_URL))
