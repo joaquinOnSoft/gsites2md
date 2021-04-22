@@ -155,6 +155,7 @@ class HTMLParser2md(HTMLParser):
             g_drive_file_downloaded = self.g_drive.download_file_from_url(url, download_path)
             print(f"path: {g_drive_file_downloaded}")
             head, tail = ntpath.split(g_drive_file_downloaded)
+            # TODO Avoid hardcoded path
             new_url = "/downloads/" + tail
         elif self.g_drive.is_folder_url(url):
             # TODO manage Google drive folder URL

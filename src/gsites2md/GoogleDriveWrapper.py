@@ -106,7 +106,7 @@ class GoogleDriveWrapper:
         # https://stackoverflow.com/questions/60111361/how-to-download-a-file-from-google-drive-using-python-and-the-drive-api-v3
         downloaded_file_path = os.path.join(path, file_name)
         fh.seek(0)
-        with open(path + file_name, 'wb') as f:
+        with open(downloaded_file_path, 'wb') as f:
             shutil.copyfileobj(fh, f)
 
         return downloaded_file_path
