@@ -106,14 +106,8 @@ class HTMLParser2md(HTMLParser):
             self.a_data = ""
 
             # Manage Google Drive links. Download the file and replace the link for a a local reference
-            if self.replace_google_drive_links and \
-                    self.href is not None and \
-                    self.href.startswith("https://drive.google.com"):
-
-                # TODO manage folder URLS, looks like this: 'https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0'
-                g_drive_file_downloaded = self.g_drive.download_file_from_url(self.href, self.downloads)
-                head, tail = ntpath.split(g_drive_file_downloaded)
-                self.href = "/downloads/" + tail
+            if self.replace_google_drive_links and self.g_drive.is_google_drive_url(self.href):
+                self.href = self.manage_google_drive_url(self.href, self.downloads)
 
             self.links.append(self.href)
         elif tag == self.HTML_TAG_BR:
@@ -154,6 +148,19 @@ class HTMLParser2md(HTMLParser):
             self.__push_nested_list(tag)
 
         self._md += html2md
+
+    def manage_google_drive_url(self, url, download_path):
+        new_url = url
+        if self.g_drive.is_file_url(url):
+            g_drive_file_downloaded = self.g_drive.download_file_from_url(url, download_path)
+            print(f"path: {g_drive_file_downloaded}")
+            head, tail = ntpath.split(g_drive_file_downloaded)
+            new_url = "/downloads/" + tail
+        elif self.g_drive.is_folder_url(url):
+            # TODO manage Google drive folder URL
+            pass
+
+        return new_url
 
     def handle_endtag(self, tag):
         self.last_tag_full_parsed = True

@@ -69,7 +69,7 @@ class GoogleDriveWrapper:
     @staticmethod
     def get_file_id_from_url(file_url: str) -> str:
         file_id = None
-        result = re.search(r'(\/file\/d\/)([\w]+)(\/)', file_url)
+        result = re.search(r'(\/file\/d\/)((.)+)(\/)', file_url)
         if result and len(result.regs) >= 2:
             file_id = file_url[result.regs[2][0]: result.regs[2][1]]
 
