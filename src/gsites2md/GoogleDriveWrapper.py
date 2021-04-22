@@ -126,7 +126,7 @@ class GoogleDriveWrapper:
 
         return downloaded_file_path
 
-    def download_folder_from_id(self, folder_id: str, path: str, file_name: str):
+    def download_folder_from_id(self, folder_id: str, path: str, folder_name: str):
         # Call the Drive v3 API
         results = self.service.files().list(
             q=f"'{folder_id}' in parents",
@@ -139,6 +139,13 @@ class GoogleDriveWrapper:
             print('Files:')
             for item in items:
                 print(u'{0} ({1}) - {2}'.format(item['name'], item['id'], item['mimeType']))
+                # TODO create subfolders
+                if item['mimeType'] == self.MIME_TYPE_FOLDER:
+                    child_folder = os.path.join(path, item['name'])
+                    self.download_folder_from_id(item['id'], child_folder, item['name'])
+                else:
+                    self.download_file_from_id(item['id'], path, item['name'])
+
 
     @staticmethod
     def __is_url_type(url_type_pattern: str, url: str):
