@@ -21,6 +21,12 @@ class GoogleDriveWrapper:
     GOOGLE_DRIVE_FILE_URL_START = "https://drive.google.com/file"
     GOOGLE_DRIVE_FOLDER_URL_START = "https://drive.google.com/open"
 
+    INDEX_ID = 0
+    INDEX_NAME = 1
+    INDEX_MIME_TYPE = 2
+
+    MIME_TYPE_FOLDER = "application/vnd.google-apps.folder"
+
     def __init__(self):
         """
         Shows basic usage of the Drive v3 API.
@@ -50,7 +56,7 @@ class GoogleDriveWrapper:
     def download_file_from_url(self, file_url: str, path: str) -> str:
         """
         Download a shared file from Google Drive and download a copy to the local path defined
-
+        SEE: https://developers.google.com/drive/api/v3/manage-downloads
         :param file_url: A google Drive URL to a shared file that looks like this for files
         https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing
         and like this for folders https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0
@@ -58,32 +64,37 @@ class GoogleDriveWrapper:
         :return: Local path of the file downloaded
         """
         downloaded_file_full_path = None
-        file_id = GoogleDriveWrapper.get_file_id_from_url(file_url)
+        file_id = self.get_content_id_from_url(file_url)
         if file_id:
-            file_name = self.get_file_name(file_id)
+            file_name = self.get_content_name(file_id)
             if file_name:
                 downloaded_file_full_path = self.download_file_from_id(file_id, path, file_name)
 
         return downloaded_file_full_path
 
-    @staticmethod
-    def get_file_id_from_url(file_url: str) -> str:
+    def get_content_id_from_url(self, content_url: str) -> str:
         file_id = None
-        result = re.search(r'(\/file\/d\/)((.)+)(\/)', file_url)
+        result = None
+
+        if self.is_file_url(content_url):
+            result = re.search(r'(\/file\/d\/)((.)+)(\/)', content_url)
+        elif self.is_folder_url(content_url):
+            result = re.search(r'(\/open\?id=)((.)+)(\&)', content_url)
+
         if result and len(result.regs) >= 2:
-            file_id = file_url[result.regs[2][0]: result.regs[2][1]]
+            file_id = content_url[result.regs[2][0]: result.regs[2][1]]
 
         return file_id
 
-    def get_file_name(self, file_id) -> str:
+    def get_content_name(self, content_id) -> str:
         """
         Recover the original file name from a Google Drive Identifier
 
-        :param file_id: Google Drive identifier
-        :return: File name or None if not found
+        :param content_id: Google Drive identifier
+        :return: File/folder name or None if not found
         """
         file_name = None
-        results = self.service.files().get(fileId=file_id, fields="id, name").execute()
+        results = self.service.files().get(fileId=content_id, fields="id, name").execute()
         if results and results.get("name"):
             file_name = results.get('name')
 
@@ -91,8 +102,6 @@ class GoogleDriveWrapper:
 
     def download_file_from_id(self, file_id: str, path: str, file_name: str) -> str:
         request = self.service.files().get_media(fileId=file_id, fields="files(id, name)")
-        # items = request.get('files', [])
-        # print(items)
 
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -111,6 +120,20 @@ class GoogleDriveWrapper:
 
         return downloaded_file_path
 
+    def download_folder_from_id(self, folder_id: str, path: str, file_name: str):
+        # Call the Drive v3 API
+        results = self.service.files().list(
+            q=f"'{folder_id}' in parents",
+            pageSize=10, fields="nextPageToken, files(id, name, mimeType)").execute()
+        items = results.get('files', [])
+
+        if not items:
+            print('No files found.')
+        else:
+            print('Files:')
+            for item in items:
+                print(u'{0} ({1}) - {2}'.format(item['name'], item['id'], item['mimeType']))
+
     @staticmethod
     def __is_url_type(url_type_pattern: str, url: str):
         is_url_type = False
@@ -119,11 +142,11 @@ class GoogleDriveWrapper:
 
         return is_url_type
 
-    def is_google_drive_url(self, url: str) -> str:
+    def is_google_drive_url(self, url: str) -> bool:
         return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_URL_START, url)
 
-    def is_file_url(self, url: str) -> str:
+    def is_file_url(self, url: str) -> bool:
         return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_FILE_URL_START, url)
 
-    def is_folder_url(self, url: str) -> str:
+    def is_folder_url(self, url: str) -> bool:
         return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_FOLDER_URL_START, url)
