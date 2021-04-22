@@ -73,6 +73,12 @@ class GoogleDriveWrapper:
         return downloaded_file_full_path
 
     def get_content_id_from_url(self, content_url: str) -> str:
+        """
+        Get content (file/folder) identifier from a Google Drive URL
+
+        :param content_url: Google Drive URL
+        :return: Content (file/folder) identifier in Google Drive
+        """
         file_id = None
         result = None
 
@@ -88,7 +94,7 @@ class GoogleDriveWrapper:
 
     def get_content_name(self, content_id) -> str:
         """
-        Recover the original file name from a Google Drive Identifier
+        Recover the original file/folder name from a Google Drive Identifier
 
         :param content_id: Google Drive identifier
         :return: File/folder name or None if not found
@@ -143,10 +149,25 @@ class GoogleDriveWrapper:
         return is_url_type
 
     def is_google_drive_url(self, url: str) -> bool:
+        """
+        Check if a given URL correspond with Google Drive URL
+        :param url: string containing an URL
+        :return: True if is a Google Drive URL, false in other case
+        """
         return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_URL_START, url)
 
     def is_file_url(self, url: str) -> bool:
+        """
+        Check if a given URL correspond with Google Drive URL linking a file
+        :param url: string containing an URL
+        :return: True if is a Google Drive URL that links a file, false in other case
+        """
         return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_FILE_URL_START, url)
 
     def is_folder_url(self, url: str) -> bool:
+        """
+        Check if a given URL correspond with Google Drive URL linking a folder
+        :param url: string containing an URL
+        :return: True if is a Google Drive URL that links a folder, false in other case
+        """
         return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_FOLDER_URL_START, url)
