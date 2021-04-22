@@ -48,3 +48,9 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertTrue(self.wrapper.is_folder_url(TestGoogleDriveWrapper.GOOGLE_DRIVE_FOLDER_URL))
         self.assertFalse(self.wrapper.is_folder_url("https://www.fiquipedia.es"))
         self.assertFalse(self.wrapper.is_folder_url(TestGoogleDriveWrapper.GOOGLE_DRIVE_FILE_URL))
+
+    def test_is_google_drive_url(self):
+        self.assertTrue(self.wrapper.is_google_drive_url(TestGoogleDriveWrapper.GOOGLE_DRIVE_FOLDER_URL))
+        self.assertTrue(self.wrapper.is_google_drive_url(TestGoogleDriveWrapper.GOOGLE_DRIVE_FILE_URL))
+        self.assertFalse(self.wrapper.is_google_drive_url("https://www.fiquipedia.es"))
+

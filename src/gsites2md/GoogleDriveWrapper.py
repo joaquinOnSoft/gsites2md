@@ -17,7 +17,7 @@ SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
 
 class GoogleDriveWrapper:
-
+    GOOGLE_DRIVE_URL_START = "https://drive.google.com"
     GOOGLE_DRIVE_FILE_URL_START = "https://drive.google.com/file"
     GOOGLE_DRIVE_FOLDER_URL_START = "https://drive.google.com/open"
 
@@ -118,6 +118,9 @@ class GoogleDriveWrapper:
             is_url_type = url.startswith(url_type_pattern)
 
         return is_url_type
+
+    def is_google_drive_url(self, url: str) -> str:
+        return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_URL_START, url)
 
     def is_file_url(self, url: str) -> str:
         return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_FILE_URL_START, url)
