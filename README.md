@@ -21,3 +21,4 @@ tools did not provide a clean Markdown, so I decided to help.
 If you have a Physics or Chemistry problem, if no one else can help, 
 and if you can browse to [fiquipedia.es](http://fiquipedia.es) and you find the solution....maybe you can 
 [buy a coffe to fiquipedia.es](https://ko-fi.com/fiquipedia).
+
