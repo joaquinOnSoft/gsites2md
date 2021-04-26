@@ -4,6 +4,7 @@ HTML to Markdown tool, designed to migrate content from Google Sites to gitlab p
 
 Tested with [fiquipedia.es](http://fiquipedia.es) (Work in progress)
 
+
 ## A bit of history
 In 2012, a one-man army started building [fiquipedia.es](http://fiquipedia.es), hosted on 
 [Google Sites](https://sites.google.com/). This page promptly became a reference in the 
@@ -22,3 +23,8 @@ If you have a Physics or Chemistry problem, if no one else can help,
 and if you can browse to [fiquipedia.es](http://fiquipedia.es) and you find the solution....maybe you can 
 [buy a coffe to fiquipedia.es](https://ko-fi.com/fiquipedia).
 
+
+## Setting up your development environment
+These are some recommended readings in order to set up a local environment using PyCharm;
+   * [Create a Project from GitHub](https://www.jetbrains.com/pycharm/guide/tips/create-project-from-github/)
+   * [Setting Up a Virtual Environment In PyCharm](https://arcade.academy/venv_install/index.html)
