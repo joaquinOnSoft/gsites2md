@@ -133,19 +133,25 @@ class GoogleDriveWrapper:
             pageSize=10, fields="nextPageToken, files(id, name, mimeType)").execute()
         items = results.get('files', [])
 
+        # TODO Remove prints
+        # TODO create folder with folder name
+
         if not items:
             print('No files found.')
         else:
             print('Files:')
             for item in items:
                 print(u'{0} ({1}) - {2}'.format(item['name'], item['id'], item['mimeType']))
-                # TODO create subfolders
                 if item['mimeType'] == self.MIME_TYPE_FOLDER:
                     child_folder = os.path.join(path, item['name'])
+
+                    if not os.path.exists(child_folder):
+                        print(f"Creating folder: {child_folder}")
+                        os.makedirs(child_folder)
+
                     self.download_folder_from_id(item['id'], child_folder, item['name'])
                 else:
                     self.download_file_from_id(item['id'], path, item['name'])
-
 
     @staticmethod
     def __is_url_type(url_type_pattern: str, url: str):

@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 
 from ..GoogleDriveWrapper import GoogleDriveWrapper
@@ -16,6 +17,12 @@ class TestGoogleDriveWrapper(unittest.TestCase):
     GOOGLE_DRIVE_FOLDER_URL = "https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0"
     FOLDER_ID = "0B-t5SY0w2S8icVFyLURtUVNQQVU"
     FOLDER_NAME = "fisica"
+
+    GOOGLE_DRIVE_FOLDER_UNED_URL = \
+        "https://drive.google.com/drive/folders/0B" \
+        "-t5SY0w2S8ifktpVUNVNWJ3NzVoVkZlSXBfWW1pTF9MR2ljVWxYNWNrLVBOZGo3eVFMVms "
+    FOLDER_UNED_ID = "0B-t5SY0w2S8ifktpVUNVNWJ3NzVoVkZlSXBfWW1pTF9MR2ljVWxYNWNrLVBOZGo3eVFMVms"
+    FOLDER_UNED_NAME = "uned"
 
     def setUp(self) -> None:
         super().setUp()
@@ -78,5 +85,18 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertFalse(self.wrapper.is_google_drive_url(None))
 
     def test_download_folder_from_id(self):
-        self.wrapper.download_folder_from_id("0B-t5SY0w2S8icVFyLURtUVNQQVU", ".", "fisica")
+        self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_UNED_ID, ".",
+                                             TestGoogleDriveWrapper.FOLDER_UNED_NAME)
+
+        self.assertTrue(os.path.exists("./uned"))
+        self.assertTrue(os.path.isfile("./uned/2008 - 06 - uned - electrotecnia - exam.pdf"))
+        self.assertTrue(os.path.isfile("./uned/2012-mo-uned-electrotecnia-exam.pdf"))
+        self.assertTrue(os.path.isfile("./uned/2014-06-09-uned-electrotecnia-exam.pdf"))
+        self.assertTrue(os.path.isfile("./uned/2014-06-09-uned-electrotecnia-exam.pdf"))
+        self.assertTrue(os.path.isfile("./uned/2015-06-uned-electrotecnia-exam.pdf"))
+
+        if os.path.isdir(TestGoogleDriveWrapper.FOLDER_UNED_NAME):
+            shutil.rmtree(TestGoogleDriveWrapper.FOLDER_UNED_NAME)
+
+
 
