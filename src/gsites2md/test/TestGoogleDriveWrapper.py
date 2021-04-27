@@ -14,9 +14,13 @@ class TestGoogleDriveWrapper(unittest.TestCase):
     FILE_ID_WITH_SPECIAL_CHARACTERS = '1PIoLKylUslWs1X9ZhSI-jx7i3POmrDii'
 
     GOOGLE_DRIVE_FILE_URL = "https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing"
+
     GOOGLE_DRIVE_FOLDER_URL = "https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0"
     FOLDER_ID = "0B-t5SY0w2S8icVFyLURtUVNQQVU"
     FOLDER_NAME = "fisica"
+
+    GOOGLE_DRIVE_FOLDER_URL_WITHOUT_EXTRA_PARAMS = "https://drive.google.com/open?id=0B-t5SY0w2S8iXzI1VHE1TUxSRUk"
+    FOLDER_WITHOUT_EXTRA_PARAMS_ID = "0B-t5SY0w2S8iXzI1VHE1TUxSRUk"
 
     GOOGLE_DRIVE_FOLDER_UNED_URL = \
         "https://drive.google.com/drive/folders/0B" \
@@ -48,6 +52,11 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         folder_id = self.wrapper.get_content_id_from_url(self.GOOGLE_DRIVE_FOLDER_URL)
         self.assertIsNotNone(folder_id)
         self.assertEqual(self.FOLDER_ID, folder_id)
+
+    def test_get_content_id_from_url_without_extra_params(self):
+        folder_id = self.wrapper.get_content_id_from_url(self.GOOGLE_DRIVE_FOLDER_URL_WITHOUT_EXTRA_PARAMS)
+        self.assertIsNotNone(folder_id)
+        self.assertEqual(self.FOLDER_WITHOUT_EXTRA_PARAMS_ID, folder_id)
 
     def test_get_content_id_with_special_characters_from_url(self):
         file_id = self.wrapper.get_content_id_from_url(self.URL_WITH_SPECIAL_CHARACTERS)

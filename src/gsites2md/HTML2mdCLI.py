@@ -26,6 +26,7 @@ def main(argv):
     # Initialize logging component
     # SEE: https://docs.python.org/3/howto/logging.html
     logging.basicConfig(filename='HTML2md.log', filemode='w', level=logging.DEBUG)
+    logging.info('Started')
 
     try:
         opts, args = getopt.getopt(argv, "hs:d:r", ["help", "source=", "dest=", "replace"])

@@ -63,15 +63,18 @@ class GoogleDriveWrapper:
         :return: Content (file/folder) identifier in Google Drive
         """
         file_id = None
-        result = None
 
         if self.is_file_url(content_url):
             result = re.search(r'(\/file\/d\/)((.)+)(\/)', content_url)
-        elif self.is_folder_url(content_url):
-            result = re.search(r'(\/open\?id=)((.)+)(\&)', content_url)
 
-        if result and len(result.regs) >= 2:
-            file_id = content_url[result.regs[2][0]: result.regs[2][1]]
+            if result and len(result.regs) >= 2:
+                file_id = content_url[result.regs[2][0]: result.regs[2][1]]
+        elif self.is_folder_url(content_url):
+            result = re.search(r'[?&]id=([^&]+).*$', content_url)
+
+            if result and len(result.regs) >= 2:
+                file_id = content_url[result.regs[1][0]: result.regs[1][1]]
+
 
         return file_id
 
