@@ -40,7 +40,6 @@ class TestHTML2md(TestCase):
         self.__process("test-table-from-gsites.html", "test-table-from-gsites.md")
 
     def test_table_ignored_from_gsites(self):
-        print("test_table_ignored_from_gsites")
         self.__process("test-table-ignored-from-gsites.html", "test-table-ignored-from-gsites.md")
 
     def test_table_of_hell(self):

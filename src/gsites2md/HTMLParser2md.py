@@ -1,3 +1,4 @@
+import logging
 import re
 import ntpath
 
@@ -151,15 +152,14 @@ class HTMLParser2md(HTMLParser):
 
     def manage_google_drive_url(self, url, download_path):
         new_url = url
-        if self.g_drive.is_file_url(url):
-            g_drive_file_downloaded = self.g_drive.download_file_from_url(url, download_path)
-            print(f"path: {g_drive_file_downloaded}")
-            head, tail = ntpath.split(g_drive_file_downloaded)
-            # TODO Avoid hardcoded path
-            new_url = "/downloads/" + tail
-        elif self.g_drive.is_folder_url(url):
-            # TODO manage Google drive folder URL
-            pass
+
+        g_drive_file_downloaded = self.g_drive.download_content_from_url(url, download_path)
+        logging.debug(f"New local path: {g_drive_file_downloaded}")
+
+        if g_drive_file_downloaded is not None:
+            g_drive_file_downloaded = g_drive_file_downloaded.replace(download_path, "/downloads/")
+            logging.debug(f"New local SERVER path: {g_drive_file_downloaded}")
+            new_url = g_drive_file_downloaded
 
         return new_url
 
@@ -232,7 +232,7 @@ class HTMLParser2md(HTMLParser):
             self._md += html2md
 
     def error(self, message):
-        print(message)
+        logging.debug(message)
 
     def __push_nested_list(self, tag: str):
         self.nested_list.append(tag)

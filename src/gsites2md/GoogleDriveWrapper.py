@@ -55,25 +55,6 @@ class GoogleDriveWrapper:
 
         self.service = build('drive', 'v3', credentials=creds)
 
-    def download_file_from_url(self, file_url: str, path: str) -> str:
-        """
-        Download a shared file from Google Drive and download a copy to the local path defined
-        SEE: https://developers.google.com/drive/api/v3/manage-downloads
-        :param file_url: A google Drive URL to a shared file that looks like this for files
-        https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing
-        and like this for folders https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0
-        :param path: Local path to store the downloaded file
-        :return: Local path of the file downloaded
-        """
-        downloaded_file_full_path = None
-        file_id = self.get_content_id_from_url(file_url)
-        if file_id:
-            file_name = self.get_content_name(file_id)
-            if file_name:
-                downloaded_file_full_path = self.download_file_from_id(file_id, path, file_name)
-
-        return downloaded_file_full_path
-
     def get_content_id_from_url(self, content_url: str) -> str:
         """
         Get content (file/folder) identifier from a Google Drive URL
@@ -115,6 +96,38 @@ class GoogleDriveWrapper:
 
         return file_name
 
+    def download_content_from_url(self, url: str, path: str) -> str:
+        download_url = None
+        if self.is_google_drive_url(url):
+            content_id = self.get_content_id_from_url(url)
+            content_name = self.get_content_name(content_id)
+
+            if self.is_file_url(url):
+                self.download_file_from_id(content_id, path, content_name)
+            elif self.is_folder_url(url):
+                self.download_folder_from_id(content_id, path, content_name)
+
+        return download_url
+
+    def download_file_from_url(self, file_url: str, path: str) -> str:
+        """
+        Download a shared file from Google Drive and download a copy to the local path defined
+        SEE: https://developers.google.com/drive/api/v3/manage-downloads
+        :param file_url: A google Drive URL to a shared file that looks like this for files
+        https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing
+        and like this for folders https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0
+        :param path: Local path to store the downloaded file
+        :return: Local path of the file downloaded
+        """
+        downloaded_file_full_path = None
+        file_id = self.get_content_id_from_url(file_url)
+        if file_id:
+            file_name = self.get_content_name(file_id)
+            if file_name:
+                downloaded_file_full_path = self.download_file_from_id(file_id, path, file_name)
+
+        return downloaded_file_full_path
+
     def download_file_from_id(self, file_id: str, path: str, file_name: str) -> str:
         request = self.service.files().get_media(fileId=file_id, fields="files(id, name)")
 
@@ -124,7 +137,7 @@ class GoogleDriveWrapper:
         done = False
         while done is False:
             status, done = downloader.next_chunk()
-            print("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
+            logging.debug("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
 
         # The file has been downloaded into RAM, now save it in a file
         # https://stackoverflow.com/questions/60111361/how-to-download-a-file-from-google-drive-using-python-and-the-drive-api-v3
