@@ -89,10 +89,10 @@ class TestGoogleDriveWrapper(unittest.TestCase):
                                              TestGoogleDriveWrapper.FOLDER_UNED_NAME)
 
         self.assertTrue(os.path.exists("./uned"))
-        self.assertTrue(os.path.isfile("./uned/2008 - 06 - uned - electrotecnia - exam.pdf"))
+        self.assertTrue(os.path.isfile("./uned/2008-06-uned-electrotecnia-exam.pdf"))
         self.assertTrue(os.path.isfile("./uned/2012-mo-uned-electrotecnia-exam.pdf"))
         self.assertTrue(os.path.isfile("./uned/2014-06-09-uned-electrotecnia-exam.pdf"))
-        self.assertTrue(os.path.isfile("./uned/2014-06-09-uned-electrotecnia-exam.pdf"))
+        self.assertTrue(os.path.isfile("./uned/2014-mo-uned-electrotecnia-guia.pdf"))
         self.assertTrue(os.path.isfile("./uned/2015-06-uned-electrotecnia-exam.pdf"))
 
         if os.path.isdir(TestGoogleDriveWrapper.FOLDER_UNED_NAME):
