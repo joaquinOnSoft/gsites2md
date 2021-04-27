@@ -8,3 +8,4 @@ __pycache__/
 .idea/
 venv/
 token.json
+HTML2md.log

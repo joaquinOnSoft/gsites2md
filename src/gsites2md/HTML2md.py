@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 
@@ -31,7 +32,7 @@ class HTML2md:
                 d_in_name = os.path.join(input_folder_name, os.path.join(dir_path, d))
                 d_out_name = d_in_name.replace(input_folder_name, output_folder_name)
                 if not os.path.exists(d_out_name):
-                    print("Creating folder: " + d_out_name)
+                    logging.debug("Creating folder: " + d_out_name)
                     os.mkdir(d_out_name)
 
             for filename in files:
@@ -40,10 +41,10 @@ class HTML2md:
 
                 if f_in_name.endswith(".html") or f_in_name.endswith(".htm"):
                     f_out_name = f_out_name.replace(".html", ".md").replace(".htm", ".md")
-                    print("HTML2MD: " + f_in_name)
+                    logging.debug("HTML2MD: " + f_in_name)
                     HTML2md.__process_file(f_in_name, f_out_name, replace_google_drive_links, downloads)
                 else:
-                    print("Copying: " + f_in_name)
+                    logging.debug("Copying: " + f_in_name)
                     shutil.copy2(f_in_name, f_out_name)
 
     @staticmethod

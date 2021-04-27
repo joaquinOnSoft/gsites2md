@@ -1,4 +1,5 @@
 import getopt
+import logging
 import os
 import sys
 
@@ -6,9 +7,9 @@ from gsites2md.HTML2md import HTML2md
 
 
 def print_help():
-    print('Convert an HTML file in a Markdown file')
+    print('Convert an HTML file or folder (and its content) in a Markdown file')
     print('\nExecution:')
-    print('\tHTML2mdCLI.py -i <input_file_or_folder>')
+    print('\tHTML2mdCLI.py -s <input_file_or_folder> -d <destination_path>')
     print('where:')
     print('\t-h, --help: Print this help')
     print('\t-s, --source <source_path>: (Mandatory) source file or folder')
@@ -21,6 +22,10 @@ def main(argv):
     destination = None
     replace_google_drive_links = False
     downloads = "."
+
+    # Initialize logging component
+    # SEE: https://docs.python.org/3/howto/logging.html
+    logging.basicConfig(filename='HTML2md.log', filemode='w', level=logging.DEBUG)
 
     try:
         opts, args = getopt.getopt(argv, "hs:d:r", ["help", "source=", "dest=", "replace"])

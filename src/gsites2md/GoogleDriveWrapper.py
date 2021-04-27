@@ -1,4 +1,5 @@
 import io
+import logging
 import os.path
 import re
 import shutil
@@ -9,6 +10,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
 # If modifying these scopes, delete the file token.json.
+from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
 
 # Authorizing requests with OAuth 2.0 (in Google Drive API v3)
@@ -100,7 +102,14 @@ class GoogleDriveWrapper:
         :return: File/folder name or None if not found
         """
         file_name = None
-        results = self.service.files().get(fileId=content_id, fields="id, name").execute()
+        results = None
+
+        try:
+            results = self.service.files().get(fileId=content_id, fields="id, name").execute()
+        except HttpError as e:
+            logging.debug("Oops! ", e.__class__, " occurred.")
+            logging.debug(e.error_details)
+
         if results and results.get("name"):
             file_name = results.get('name')
 
@@ -133,23 +142,21 @@ class GoogleDriveWrapper:
             pageSize=10, fields="nextPageToken, files(id, name, mimeType)").execute()
         items = results.get('files', [])
 
-        # TODO Remove prints
-
         if not items:
-            print('No files found.')
+            logging.debug('No files found.')
         else:
             download_path = os.path.join(path, folder_name)
             if not os.path.exists(download_path):
                 os.mkdir(download_path)
 
-            print('Files:')
+            logging.debug('Files:')
             for item in items:
-                print(u'{0} ({1}) - {2}'.format(item['name'], item['id'], item['mimeType']))
+                logging.debug(u'{0} ({1}) - {2}'.format(item['name'], item['id'], item['mimeType']))
                 if item['mimeType'] == self.MIME_TYPE_FOLDER:
                     child_folder = os.path.join(download_path, item['name'])
 
                     if not os.path.exists(child_folder):
-                        print(f"Creating folder: {child_folder}")
+                        logging.debug(f"Creating folder: {child_folder}")
                         os.makedirs(child_folder)
 
                     self.download_folder_from_id(item['id'], child_folder, item['name'])
