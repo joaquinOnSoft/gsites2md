@@ -75,7 +75,6 @@ class GoogleDriveWrapper:
             if result and len(result.regs) >= 2:
                 file_id = content_url[result.regs[1][0]: result.regs[1][1]]
 
-
         return file_id
 
     def get_content_name(self, content_id) -> str:
@@ -91,8 +90,7 @@ class GoogleDriveWrapper:
         try:
             results = self.service.files().get(fileId=content_id, fields="id, name").execute()
         except HttpError as e:
-            logging.debug("Oops! ", e.__class__, " occurred.")
-            logging.debug(e.error_details)
+            logging.debug(f"{e.resp.status} - {e.resp.reason}  - Recovering content name from URL: {e.uri}")
 
         if results and results.get("name"):
             file_name = results.get('name')
