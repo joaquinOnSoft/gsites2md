@@ -103,10 +103,13 @@ class GoogleDriveWrapper:
             content_id = self.get_content_id_from_url(url)
             content_name = self.get_content_name(content_id)
 
-            if self.is_file_url(url):
-                self.download_file_from_id(content_id, path, content_name)
-            elif self.is_folder_url(url):
-                self.download_folder_from_id(content_id, path, content_name)
+            if content_name:
+                if self.is_file_url(url):
+                    self.download_file_from_id(content_id, path, content_name)
+                elif self.is_folder_url(url):
+                    self.download_folder_from_id(content_id, path, content_name)
+            else:
+                logging.warning(f"File name not found for URL: {url}")
 
         return download_url
 
@@ -150,6 +153,10 @@ class GoogleDriveWrapper:
         return downloaded_file_path
 
     def download_folder_from_id(self, folder_id: str, path: str, folder_name: str):
+        download_path = os.path.join(path, folder_name)
+        if not os.path.exists(download_path):
+            os.mkdir(download_path)
+
         # Call the Drive v3 API
         results = self.service.files().list(
             q=f"'{folder_id}' in parents",
@@ -159,21 +166,11 @@ class GoogleDriveWrapper:
         if not items:
             logging.debug('No files found.')
         else:
-            download_path = os.path.join(path, folder_name)
-            if not os.path.exists(download_path):
-                os.mkdir(download_path)
-
             logging.debug('Files:')
             for item in items:
                 logging.debug(u'{0} ({1}) - {2}'.format(item['name'], item['id'], item['mimeType']))
                 if item['mimeType'] == self.MIME_TYPE_FOLDER:
-                    child_folder = os.path.join(download_path, item['name'])
-
-                    if not os.path.exists(child_folder):
-                        logging.debug(f"Creating folder: {child_folder}")
-                        os.makedirs(child_folder)
-
-                    self.download_folder_from_id(item['id'], child_folder, item['name'])
+                    self.download_folder_from_id(item['id'], download_path, item['name'])
                 else:
                     self.download_file_from_id(item['id'], download_path, item['name'])
 

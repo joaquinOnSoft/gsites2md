@@ -28,6 +28,10 @@ class TestGoogleDriveWrapper(unittest.TestCase):
     FOLDER_UNED_ID = "0B-t5SY0w2S8ifktpVUNVNWJ3NzVoVkZlSXBfWW1pTF9MR2ljVWxYNWNrLVBOZGo3eVFMVms"
     FOLDER_UNED_NAME = "uned"
 
+    GOOGLE_DRIVE_FOLDER_WITH_SUBFOLDERS_URL = "https://drive.google.com/drive/folders/0B-t5SY0w2S8iXzI1VHE1TUxSRUk"
+    FOLDER_WITH_SUBFOLDERS_ID = "0B-t5SY0w2S8iXzI1VHE1TUxSRUk"
+    FOLDER_WITH_SUBFOLDERS_NAME = "GradoMedioxComunidades"
+
     def setUp(self) -> None:
         super().setUp()
         self.wrapper = GoogleDriveWrapper()
@@ -107,5 +111,34 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         if os.path.isdir(TestGoogleDriveWrapper.FOLDER_UNED_NAME):
             shutil.rmtree(TestGoogleDriveWrapper.FOLDER_UNED_NAME)
 
+    def test_download_folder_with_subfolders_from_id(self):
+        self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_ID, ".",
+                                             TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
 
+        self.assertTrue(os.path.exists("./GradoMedioxComunidades"))
+
+        self.assertTrue(os.path.exists("./GradoMedioxComunidades/CastillaLaMancha"))
+        self.assertTrue(
+            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2010-CastillaLaMancha-modelo-GM-CT.pdf"))
+        self.assertTrue(
+            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2012-CastillaLaMancha-06-GM-CT.pdf"))
+        self.assertTrue(
+            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2012-CastillaLaMancha-09-GM-CT.pdf"))
+        self.assertTrue(
+            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2013-CastillaLaMancha-06-GM-CT.pdf"))
+        self.assertTrue(
+            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2013-CastillaLaMancha-09-GM-CT.pdf"))
+
+        self.assertTrue(os.path.exists("./GradoMedioxComunidades/Madrid"))
+        self.assertTrue(
+            os.path.isfile("./GradoMedioxComunidades/Madrid/2004-madrid-GM-CT-exam.doc"))
+        self.assertTrue(
+            os.path.isfile("./GradoMedioxComunidades/Madrid/2004-madrid-GM-CT-soluc.doc"))
+        self.assertTrue(
+            os.path.isfile("./GradoMedioxComunidades/Madrid/2005-madrid-GM-CT-exam.doc"))
+        self.assertTrue(
+            os.path.isfile("./GradoMedioxComunidades/Madrid/2005-madrid-GM-CT-soluc.doc"))
+
+        if os.path.isdir(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME):
+            shutil.rmtree(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
 
