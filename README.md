@@ -22,7 +22,6 @@ If you have a Physics or Chemistry problem, if no one else can help,
 and if you can browse to [fiquipedia.es](http://fiquipedia.es) and you find the solution....maybe you can 
 [buy a coffe to fiquipedia.es](https://ko-fi.com/fiquipedia).
 
-
 ## Setting up your development environment
 These are some recommended readings in order to set up a local environment using PyCharm;
    * [Create a Project from GitHub](https://www.jetbrains.com/pycharm/guide/tips/create-project-from-github/)
@@ -38,3 +37,6 @@ beautifulsoup4
 google-api-python-client
 google-auth-oauthlib
 ```
+## Unit testing
+> In order to execute the unit test that download content from Google Driver 
+> you must have access to the Google Drive account where the content is stored. 
