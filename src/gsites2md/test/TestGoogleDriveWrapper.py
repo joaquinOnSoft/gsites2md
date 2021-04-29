@@ -93,7 +93,7 @@ class TestGoogleDriveWrapper(unittest.TestCase):
 
     def test_get_content_path(self):
         path = self.wrapper.get_content_path(self.FILE_UNDER_FOLDER_HIERARCHY_ID)
-        self.assertEqual("OposicionesFQ/Canarias", path)
+        self.assertEqual("OposicionesFQ/Canarias/", path)
 
     def test_get_folder_name(self):
         folder_name = self.wrapper.get_content_name(self.FOLDER_ID)
