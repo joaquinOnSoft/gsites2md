@@ -30,6 +30,7 @@ class GoogleDriveWrapper:
     METADATA_FIELD_ID = "id"
     METADATA_FIELD_NAME = "name"
     METADATA_FIELD_MIMETYPE = "mimeType"
+    METADATA_FIELD_PARENTS = "parents"
 
     MIME_TYPE_FOLDER = "application/vnd.google-apps.folder"
 
@@ -86,26 +87,26 @@ class GoogleDriveWrapper:
 
     def __get_content_metadata(self, content_id) -> str:
         """
-        Recover the original file/folder metatata (id, name, mimeType) from a Google Drive Identifier
+        Recover the original file/folder metatata (id, name, parents, mimeType) from a Google Drive Identifier
 
         :param content_id: Google Drive identifier
-        :return: File/folder metadata map containing id, name and mimeType or None if not found
+        :return: File/folder metadata map containing 'id', 'name', 'parents' and 'mimeType' or 'None' if not found
         """
         results = None
 
         try:
-            results = self.service.files().get(fileId=content_id, fields="id, name, mimeType").execute()
+            results = self.service.files().get(fileId=content_id, fields="id, name, parents, mimeType").execute()
         except HttpError as e:
             logging.debug(f"{e.resp.status} - {e.resp.reason}  - Recovering content metadata from URL: {e.uri}")
 
         return results
 
-    def get_content_metadata_by_name(self, content_id: str, field_name: str) -> str:
+    def get_content_metadata_by_name(self, content_id: str, field_name: str):
         """
-        Recover the original file/folder metatata (id, name, mimeType) from a Google Drive Identifier
+        Recover the original file/folder metadata (id, name, parents, mimeType) from a Google Drive Identifier
 
         :param content_id: Google Drive identifier
-        :param field_name: id, name or mimeType
+        :param field_name: id, name, parents or mimeType
         :return: File/folder name or None if not found
         """
         field_value = None
@@ -147,6 +148,26 @@ class GoogleDriveWrapper:
 
         return content_type
 
+    def get_content_path(self, content_id: str) -> str:
+        path = None
+
+        results = self.__get_content_metadata(content_id)
+
+        if results:
+            parents = results.get(GoogleDriveWrapper.METADATA_FIELD_PARENTS)
+            if parents and len(parents) > 0:
+                path = ""
+
+                while True:
+                    results = self.__get_content_metadata(parents[0])
+                    parents = results.get(GoogleDriveWrapper.METADATA_FIELD_PARENTS)
+
+                    if parents is None:
+                        break
+                    path = os.path.join(results.get(GoogleDriveWrapper.METADATA_FIELD_NAME), path)
+
+        return path
+
     def download_content_from_url(self, url: str, path: str) -> str:
         download_url = None
         if self.is_google_drive_url(url):
@@ -163,7 +184,7 @@ class GoogleDriveWrapper:
 
         return download_url
 
-    def download_file_from_url(self, file_url: str, path: str) -> str:
+    def download_file_from_url(self, file_url: str, path: str, recreate_gdrive_folder_structure: bool = False) -> str:
         """
         Download a shared file from Google Drive and download a copy to the local path defined
         SEE: https://developers.google.com/drive/api/v3/manage-downloads
@@ -171,6 +192,8 @@ class GoogleDriveWrapper:
         https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing
         and like this for folders https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0
         :param path: Local path to store the downloaded file
+        :param recreate_gdrive_folder_structure: Flag to indicate that the Google Drive path must be replicate in the
+        local environment
         :return: Local path of the file downloaded
         """
         downloaded_file_full_path = None

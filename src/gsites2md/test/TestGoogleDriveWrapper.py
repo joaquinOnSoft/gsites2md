@@ -13,6 +13,10 @@ class TestGoogleDriveWrapper(unittest.TestCase):
     URL_WITH_SPECIAL_CHARACTERS = "https://drive.google.com/file/d/1PIoLKylUslWs1X9ZhSI-jx7i3POmrDii/view?usp=sharing"
     FILE_ID_WITH_SPECIAL_CHARACTERS = '1PIoLKylUslWs1X9ZhSI-jx7i3POmrDii'
 
+    GOOGLE_DRIVE_FILE_UNDER_FOLDER_HIERARCHY_URL = \
+        "https://drive.google.com/file/d/1Vgfp5pWzI1YBBF819HZq5LVyO68z9yeq/view"
+    FILE_UNDER_FOLDER_HIERARCHY_ID = "1Vgfp5pWzI1YBBF819HZq5LVyO68z9yeq"
+
     GOOGLE_DRIVE_FILE_URL = "https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing"
 
     GOOGLE_DRIVE_FOLDER_URL = "https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0"
@@ -75,14 +79,21 @@ class TestGoogleDriveWrapper(unittest.TestCase):
 
     def test_get_content_metadata_by_name(self):
         file_name = self.wrapper.get_content_metadata_by_name(self.FILE_ID, GoogleDriveWrapper.METADATA_FIELD_NAME)
-
         self.assertIsNotNone(file_name)
         self.assertEqual(self.FILE_NAME, file_name)
 
         mimetype = self.wrapper.get_content_metadata_by_name(self.FILE_ID, GoogleDriveWrapper.METADATA_FIELD_MIMETYPE)
-
         self.assertIsNotNone(mimetype)
         self.assertEqual('application/pdf', mimetype)
+
+        parents = self.wrapper.get_content_metadata_by_name(self.FILE_UNDER_FOLDER_HIERARCHY_ID,
+                                                            GoogleDriveWrapper.METADATA_FIELD_PARENTS)
+        self.assertIsNotNone(parents)
+        self.assertEqual(['1qK_9zEcFePjcGDkX2VayPkQ2XNBTLBoD'], parents)
+
+    def test_get_content_path(self):
+        path = self.wrapper.get_content_path(self.FILE_UNDER_FOLDER_HIERARCHY_ID)
+        self.assertEqual("OposicionesFQ/Canarias", path)
 
     def test_get_folder_name(self):
         folder_name = self.wrapper.get_content_name(self.FOLDER_ID)
