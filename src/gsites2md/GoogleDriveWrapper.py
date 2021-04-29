@@ -21,13 +21,20 @@ SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 class GoogleDriveWrapper:
     GOOGLE_DRIVE_URL_START = "https://drive.google.com"
     GOOGLE_DRIVE_FILE_URL_START = "https://drive.google.com/file"
-    GOOGLE_DRIVE_FOLDER_URL_START = "https://drive.google.com/open"
+    GOOGLE_DRIVE_OPEN_CONTENT_URL_START = "https://drive.google.com/open"
 
     INDEX_ID = 0
     INDEX_NAME = 1
     INDEX_MIME_TYPE = 2
 
+    METADATA_FIELD_ID = "id"
+    METADATA_FIELD_NAME = "name"
+    METADATA_FIELD_MIMETYPE = "mimeType"
+
     MIME_TYPE_FOLDER = "application/vnd.google-apps.folder"
+
+    CONTENT_TYPE_FILE = "file"
+    CONTENT_TYPE_FOLDER = "folder"
 
     def __init__(self):
         """
@@ -64,18 +71,50 @@ class GoogleDriveWrapper:
         """
         file_id = None
 
-        if self.is_file_url(content_url):
+        if self.__is_url_type(GoogleDriveWrapper.GOOGLE_DRIVE_FILE_URL_START, content_url):
             result = re.search(r'(\/file\/d\/)((.)+)(\/)', content_url)
 
             if result and len(result.regs) >= 2:
                 file_id = content_url[result.regs[2][0]: result.regs[2][1]]
-        elif self.is_folder_url(content_url):
+        elif self.__is_url_type(GoogleDriveWrapper.GOOGLE_DRIVE_OPEN_CONTENT_URL_START, content_url):
             result = re.search(r'[?&]id=([^&]+).*$', content_url)
 
             if result and len(result.regs) >= 2:
                 file_id = content_url[result.regs[1][0]: result.regs[1][1]]
 
         return file_id
+
+    def __get_content_metadata(self, content_id) -> str:
+        """
+        Recover the original file/folder metatata (id, name, mimeType) from a Google Drive Identifier
+
+        :param content_id: Google Drive identifier
+        :return: File/folder metadata map containing id, name and mimeType or None if not found
+        """
+        results = None
+
+        try:
+            results = self.service.files().get(fileId=content_id, fields="id, name, mimeType").execute()
+        except HttpError as e:
+            logging.debug(f"{e.resp.status} - {e.resp.reason}  - Recovering content metadata from URL: {e.uri}")
+
+        return results
+
+    def get_content_metadata_by_name(self, content_id: str, field_name: str) -> str:
+        """
+        Recover the original file/folder metatata (id, name, mimeType) from a Google Drive Identifier
+
+        :param content_id: Google Drive identifier
+        :param field_name: id, name or mimeType
+        :return: File/folder name or None if not found
+        """
+        field_value = None
+        results = self.__get_content_metadata(content_id)
+
+        if results and results.get(field_name):
+            field_value = results.get(field_name)
+
+        return field_value
 
     def get_content_name(self, content_id) -> str:
         """
@@ -84,18 +123,29 @@ class GoogleDriveWrapper:
         :param content_id: Google Drive identifier
         :return: File/folder name or None if not found
         """
-        file_name = None
-        results = None
+        return self.get_content_metadata_by_name(content_id, GoogleDriveWrapper.METADATA_FIELD_NAME)
 
-        try:
-            results = self.service.files().get(fileId=content_id, fields="id, name").execute()
-        except HttpError as e:
-            logging.debug(f"{e.resp.status} - {e.resp.reason}  - Recovering content name from URL: {e.uri}")
+    def get_content_type_from_url(self, url: str) -> str:
+        """
+        Check if a given URL correspond with Google Drive URL linking a file or a folder
+        :param url: string containing an URL
+        :return: 'folder' if is a Google Drive URL that links a folder, 'file' if links a file,
+        or 'None' in in other case
+        """
+        content_type = None
 
-        if results and results.get("name"):
-            file_name = results.get('name')
+        if GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_FILE_URL_START, url):
+            content_type = GoogleDriveWrapper.CONTENT_TYPE_FILE
+        elif GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_OPEN_CONTENT_URL_START, url):
+            content_id = self.get_content_id_from_url(url)
+            if content_id:
+                mimetype = self.get_content_metadata_by_name(content_id, GoogleDriveWrapper.METADATA_FIELD_MIMETYPE)
+                if mimetype == GoogleDriveWrapper.MIME_TYPE_FOLDER:
+                    content_type = GoogleDriveWrapper.CONTENT_TYPE_FOLDER
+                else:
+                    content_type = GoogleDriveWrapper.CONTENT_TYPE_FILE
 
-        return file_name
+        return content_type
 
     def download_content_from_url(self, url: str, path: str) -> str:
         download_url = None
@@ -196,7 +246,7 @@ class GoogleDriveWrapper:
         :param url: string containing an URL
         :return: True if is a Google Drive URL that links a file, false in other case
         """
-        return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_FILE_URL_START, url)
+        return self.get_content_type_from_url(url) == GoogleDriveWrapper.CONTENT_TYPE_FILE
 
     def is_folder_url(self, url: str) -> bool:
         """
@@ -204,4 +254,4 @@ class GoogleDriveWrapper:
         :param url: string containing an URL
         :return: True if is a Google Drive URL that links a folder, false in other case
         """
-        return GoogleDriveWrapper.__is_url_type(self.GOOGLE_DRIVE_FOLDER_URL_START, url)
+        return self.get_content_type_from_url(url) == GoogleDriveWrapper.CONTENT_TYPE_FOLDER

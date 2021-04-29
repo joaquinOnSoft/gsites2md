@@ -67,11 +67,22 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertIsNotNone(file_id)
         self.assertEqual(self.FILE_ID_WITH_SPECIAL_CHARACTERS, file_id)
 
-    def test_get_file_name(self):
+    def test_get_content_name(self):
         file_name = self.wrapper.get_content_name(self.FILE_ID)
 
         self.assertIsNotNone(file_name)
         self.assertEqual(self.FILE_NAME, file_name)
+
+    def test_get_content_metadata_by_name(self):
+        file_name = self.wrapper.get_content_metadata_by_name(self.FILE_ID, GoogleDriveWrapper.METADATA_FIELD_NAME)
+
+        self.assertIsNotNone(file_name)
+        self.assertEqual(self.FILE_NAME, file_name)
+
+        mimetype = self.wrapper.get_content_metadata_by_name(self.FILE_ID, GoogleDriveWrapper.METADATA_FIELD_MIMETYPE)
+
+        self.assertIsNotNone(mimetype)
+        self.assertEqual('application/pdf', mimetype)
 
     def test_get_folder_name(self):
         folder_name = self.wrapper.get_content_name(self.FOLDER_ID)
@@ -141,4 +152,3 @@ class TestGoogleDriveWrapper(unittest.TestCase):
 
         if os.path.isdir(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME):
             shutil.rmtree(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
-
