@@ -28,7 +28,7 @@ class TestGoogleDriveWrapper(unittest.TestCase):
 
     GOOGLE_DRIVE_FOLDER_UNED_URL = \
         "https://drive.google.com/drive/folders/0B" \
-        "-t5SY0w2S8ifktpVUNVNWJ3NzVoVkZlSXBfWW1pTF9MR2ljVWxYNWNrLVBOZGo3eVFMVms "
+        "-t5SY0w2S8ifktpVUNVNWJ3NzVoVkZlSXBfWW1pTF9MR2ljVWxYNWNrLVBOZGo3eVFMVms"
     FOLDER_UNED_ID = "0B-t5SY0w2S8ifktpVUNVNWJ3NzVoVkZlSXBfWW1pTF9MR2ljVWxYNWNrLVBOZGo3eVFMVms"
     FOLDER_UNED_NAME = "uned"
 
@@ -126,23 +126,24 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertFalse(self.wrapper.is_google_drive_url(None))
 
     def test_download_folder_from_id(self):
-        self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_UNED_ID, ".",
-                                             TestGoogleDriveWrapper.FOLDER_UNED_NAME)
+        path = self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_UNED_ID, ".")
 
-        self.assertTrue(os.path.exists("./uned"))
-        self.assertTrue(os.path.isfile("./uned/2008-06-uned-electrotecnia-exam.pdf"))
-        self.assertTrue(os.path.isfile("./uned/2012-mo-uned-electrotecnia-exam.pdf"))
-        self.assertTrue(os.path.isfile("./uned/2014-06-09-uned-electrotecnia-exam.pdf"))
-        self.assertTrue(os.path.isfile("./uned/2014-mo-uned-electrotecnia-guia.pdf"))
-        self.assertTrue(os.path.isfile("./uned/2015-06-uned-electrotecnia-exam.pdf"))
+        self.assertEqual("./PAUxComunidades/electrotecnia/uned", path)
+        self.assertTrue(os.path.exists("./PAUxComunidades/electrotecnia/uned"))
+        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2008-06-uned-electrotecnia-exam.pdf"))
+        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2012-mo-uned-electrotecnia-exam.pdf"))
+        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2014-06-09-uned-electrotecnia-exam.pdf"))
+        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2014-mo-uned-electrotecnia-guia.pdf"))
+        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2015-06-uned-electrotecnia-exam.pdf"))
 
-        if os.path.isdir(TestGoogleDriveWrapper.FOLDER_UNED_NAME):
-            shutil.rmtree(TestGoogleDriveWrapper.FOLDER_UNED_NAME)
+        if os.path.isdir(path):
+            shutil.rmtree(path)
 
     def test_download_folder_with_subfolders_from_id(self):
-        self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_ID, ".",
-                                             TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
+        path = self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_ID, ".")
 
+        self.assertIsNotNone(path)
+        self.assertEqual("./GradoMedioxComunidades", path)
         self.assertTrue(os.path.exists("./GradoMedioxComunidades"))
 
         self.assertTrue(os.path.exists("./GradoMedioxComunidades/CastillaLaMancha"))

@@ -172,13 +172,13 @@ class GoogleDriveWrapper:
         download_url = None
         if self.is_google_drive_url(url):
             content_id = self.get_content_id_from_url(url)
-            content_name = self.get_content_name(content_id)
 
-            if content_name:
+            if content_id:
                 if self.is_file_url(url):
-                    download_url = self.download_file_from_id(content_id, path, content_name, True)
+                    content_name = self.get_content_name(content_id)
+                    download_url = self.download_file_from_id(content_id, path, content_name, False)
                 elif self.is_folder_url(url):
-                    download_url = self.download_folder_from_id(content_id, path, content_name)
+                    download_url = self.download_folder_from_id(content_id, path)
             else:
                 logging.warning(f"File name not found for URL: {url}")
 
@@ -203,17 +203,43 @@ class GoogleDriveWrapper:
 
         return downloaded_file_full_path
 
+    def __replicate_google_drive_folder_structure(self, content_id, path):
+        """
+        Replicate Google Drive folder structure under the local path
+        :param content_id: Google Drive content identifie (file or folder)
+        :param path: local base path
+        :return: Local path that replicates the Google Drive folder structure under the local base path
+        """
+        google_drive_path = self.get_content_path(content_id)
+        if google_drive_path is not None:
+            path = os.path.join(path, google_drive_path)
+            # Create folder if not exists
+            if not os.path.exists(path):
+                os.makedirs(path)
+
+        if not self.is_file(content_id):
+            folder_name = self.get_content_name(content_id)
+            path = os.path.join(path, folder_name)
+            if not os.path.exists(path):
+                os.makedirs(path)
+
+        return path
+
     def download_file_from_id(self, file_id: str, path: str, file_name: str,
-                              recreate_google_drive_folder_structure: bool = False) -> str:
+                              replicate_google_drive_folder_structure: bool = True) -> str:
         """
         Download a shared file from Google Drive and download a copy to the local path defined
         :param file_id: file identifier
         :param path: local path where the file will be downloaded
         :param file_name: File name to be used to save the file
-        :param recreate_google_drive_folder_structure: Flag to indicate that the Google Drive path must be replicate in the
         local environment
+        :param replicate_google_drive_folder_structure: Flag to indicate if Google Drive folder structure must be
+        replicated under the local path or not.1
         :return:
         """
+        if replicate_google_drive_folder_structure:
+            path = self.__replicate_google_drive_folder_structure(file_id, path)
+
         request = self.service.files().get_media(fileId=file_id, fields="files(id, name)")
 
         fh = io.BytesIO()
@@ -224,15 +250,6 @@ class GoogleDriveWrapper:
             status, done = downloader.next_chunk()
             logging.debug("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
 
-        if recreate_google_drive_folder_structure:
-            # Replicate Google Drive folder structure under the local path
-            google_drive_path = self.get_content_path(file_id)
-            if google_drive_path is not None:
-                path = os.path.join(path, google_drive_path)
-                # Create folder if not exists
-                if not os.path.exists(path):
-                    os.makedirs(path)
-
         # The file has been downloaded into RAM, now save it in a file
         # https://stackoverflow.com/questions/60111361/how-to-download-a-file-from-google-drive-using-python-and-the-drive-api-v3
         downloaded_file_path = os.path.join(path, file_name)
@@ -242,10 +259,8 @@ class GoogleDriveWrapper:
 
         return downloaded_file_path
 
-    def download_folder_from_id(self, folder_id: str, path: str, folder_name: str) -> str:
-        download_path = os.path.join(path, folder_name)
-        if not os.path.exists(download_path):
-            os.mkdir(download_path)
+    def download_folder_from_id(self, folder_id: str, path: str) -> str:
+        download_path = self.__replicate_google_drive_folder_structure(folder_id, path)
 
         # Call the Drive v3 API
         results = self.service.files().list(
@@ -254,15 +269,17 @@ class GoogleDriveWrapper:
         items = results.get('files', [])
 
         if not items:
-            logging.debug('No files found.')
+            logging.info('No files found.')
         else:
             logging.debug('Files:')
             for item in items:
                 logging.debug(u'{0} ({1}) - {2}'.format(item['name'], item['id'], item['mimeType']))
                 if item['mimeType'] == self.MIME_TYPE_FOLDER:
-                    self.download_folder_from_id(item['id'], download_path, item['name'])
+                    # Base path DOESN'T CHANGE for FOLDERS (the remote path is replicated under the base path)
+                    self.download_folder_from_id(item['id'], path)
                 else:
-                    self.download_file_from_id(item['id'], download_path, item['name'])
+                    # Base path CHANGES for FILES
+                    self.download_file_from_id(item['id'], download_path, item['name'], False)
 
         return download_path
 
@@ -297,3 +314,7 @@ class GoogleDriveWrapper:
         :return: True if is a Google Drive URL that links a folder, false in other case
         """
         return self.get_content_type_from_url(url) == GoogleDriveWrapper.CONTENT_TYPE_FOLDER
+
+    def is_file(self, content_id):
+        mimetype = self.get_content_metadata_by_name(content_id, GoogleDriveWrapper.METADATA_FIELD_MIMETYPE)
+        return mimetype != GoogleDriveWrapper.MIME_TYPE_FOLDER
