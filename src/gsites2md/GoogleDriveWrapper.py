@@ -176,7 +176,7 @@ class GoogleDriveWrapper:
             if content_id:
                 if self.is_file_url(url):
                     content_name = self.get_content_name(content_id)
-                    download_url = self.download_file_from_id(content_id, path, content_name, False)
+                    download_url = self.download_file_from_id(content_id, path, content_name)
                 elif self.is_folder_url(url):
                     download_url = self.download_folder_from_id(content_id, path)
             else:
