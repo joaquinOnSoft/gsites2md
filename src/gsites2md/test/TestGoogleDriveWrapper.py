@@ -40,23 +40,10 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         super().setUp()
         self.wrapper = GoogleDriveWrapper()
 
-    def test_download_file_from_id(self):
-        file_path = self.wrapper.download_file_from_id(self.FILE_ID, "./", self.FILE_NAME)
-        self.assertIsNotNone(file_path)
-        self.assertTrue(os.path.isfile(file_path))
-        os.remove(file_path)
-
-    def test_download_file_from_url(self):
-        file_path = self.wrapper.download_file_from_url(self.URL, "./")
-        self.assertIsNotNone(file_path)
-        self.assertTrue(os.path.isfile(file_path))
-        os.remove(file_path)
-
-    def test_download_content_from_url(self):
-        file_path = self.wrapper.download_content_from_url(self.URL, "./")
-        self.assertIsNotNone(file_path)
-        self.assertTrue(os.path.isfile(file_path))
-        os.remove(file_path)
+    @staticmethod
+    def remove_folder(path: str):
+        if os.path.isdir(path):
+            shutil.rmtree(path)
 
     def test_get_content_id_from_url(self):
         file_id = self.wrapper.get_content_id_from_url(self.URL)
@@ -125,6 +112,28 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertFalse(self.wrapper.is_google_drive_url("https://www.fiquipedia.es"))
         self.assertFalse(self.wrapper.is_google_drive_url(None))
 
+    def __check_file_download(self, file_path: str):
+        self.assertIsNotNone(file_path)
+        self.assertTrue(os.path.isfile(file_path))
+
+        folder = os.path.dirname(file_path)
+        if folder != "." and folder != "./":
+            os.remove(folder)
+        else:
+            os.remove(file_path)
+
+    def test_download_file_from_id(self):
+        file_path = self.wrapper.download_file_from_id(self.FILE_ID, "./", self.FILE_NAME)
+        self.__check_file_download(file_path)
+
+    def test_download_file_from_url(self):
+        file_path = self.wrapper.download_file_from_url(self.URL, "./")
+        self.__check_file_download(file_path)
+
+    def test_download_content_from_url(self):
+        file_path = self.wrapper.download_content_from_url(self.URL, "./")
+        self.__check_file_download(file_path)
+
     def test_download_folder_from_id(self):
         path = self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_UNED_ID, ".")
 
@@ -136,8 +145,7 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2014-mo-uned-electrotecnia-guia.pdf"))
         self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2015-06-uned-electrotecnia-exam.pdf"))
 
-        if os.path.isdir(path):
-            shutil.rmtree(path)
+        TestGoogleDriveWrapper.remove_folder("./PAUxComunidades")
 
     def test_download_folder_with_subfolders_from_id(self):
         path = self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_ID, ".")
@@ -168,5 +176,4 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertTrue(
             os.path.isfile("./GradoMedioxComunidades/Madrid/2005-madrid-GM-CT-soluc.doc"))
 
-        if os.path.isdir(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME):
-            shutil.rmtree(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
+        TestGoogleDriveWrapper.remove_folder(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
