@@ -38,5 +38,5 @@ google-api-python-client
 google-auth-oauthlib
 ```
 ## Unit testing
-> In order to execute the unit test that download content from Google Driver 
+> In order to execute the unit test that download content from Google Drive 
 > you must have access to the Google Drive account where the content is stored. 

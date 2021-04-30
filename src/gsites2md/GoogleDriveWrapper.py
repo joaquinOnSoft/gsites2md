@@ -176,15 +176,15 @@ class GoogleDriveWrapper:
 
             if content_name:
                 if self.is_file_url(url):
-                    self.download_file_from_id(content_id, path, content_name)
+                    download_url = self.download_file_from_id(content_id, path, content_name, True)
                 elif self.is_folder_url(url):
-                    self.download_folder_from_id(content_id, path, content_name)
+                    download_url = self.download_folder_from_id(content_id, path, content_name)
             else:
                 logging.warning(f"File name not found for URL: {url}")
 
         return download_url
 
-    def download_file_from_url(self, file_url: str, path: str, recreate_gdrive_folder_structure: bool = False) -> str:
+    def download_file_from_url(self, file_url: str, path: str) -> str:
         """
         Download a shared file from Google Drive and download a copy to the local path defined
         SEE: https://developers.google.com/drive/api/v3/manage-downloads
@@ -192,8 +192,6 @@ class GoogleDriveWrapper:
         https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing
         and like this for folders https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0
         :param path: Local path to store the downloaded file
-        :param recreate_gdrive_folder_structure: Flag to indicate that the Google Drive path must be replicate in the
-        local environment
         :return: Local path of the file downloaded
         """
         downloaded_file_full_path = None
@@ -205,7 +203,17 @@ class GoogleDriveWrapper:
 
         return downloaded_file_full_path
 
-    def download_file_from_id(self, file_id: str, path: str, file_name: str) -> str:
+    def download_file_from_id(self, file_id: str, path: str, file_name: str,
+                              recreate_google_drive_folder_structure: bool = False) -> str:
+        """
+        Download a shared file from Google Drive and download a copy to the local path defined
+        :param file_id: file identifier
+        :param path: local path where the file will be downloaded
+        :param file_name: File name to be used to save the file
+        :param recreate_google_drive_folder_structure: Flag to indicate that the Google Drive path must be replicate in the
+        local environment
+        :return:
+        """
         request = self.service.files().get_media(fileId=file_id, fields="files(id, name)")
 
         fh = io.BytesIO()
@@ -216,6 +224,15 @@ class GoogleDriveWrapper:
             status, done = downloader.next_chunk()
             logging.debug("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
 
+        if recreate_google_drive_folder_structure:
+            # Replicate Google Drive folder structure under the local path
+            google_drive_path = self.get_content_path(file_id)
+            if google_drive_path is not None:
+                path = os.path.join(path, google_drive_path)
+                # Create folder if not exists
+                if not os.path.exists(path):
+                    os.makedirs(path)
+
         # The file has been downloaded into RAM, now save it in a file
         # https://stackoverflow.com/questions/60111361/how-to-download-a-file-from-google-drive-using-python-and-the-drive-api-v3
         downloaded_file_path = os.path.join(path, file_name)
@@ -225,7 +242,7 @@ class GoogleDriveWrapper:
 
         return downloaded_file_path
 
-    def download_folder_from_id(self, folder_id: str, path: str, folder_name: str):
+    def download_folder_from_id(self, folder_id: str, path: str, folder_name: str) -> str:
         download_path = os.path.join(path, folder_name)
         if not os.path.exists(download_path):
             os.mkdir(download_path)
@@ -246,6 +263,8 @@ class GoogleDriveWrapper:
                     self.download_folder_from_id(item['id'], download_path, item['name'])
                 else:
                     self.download_file_from_id(item['id'], download_path, item['name'])
+
+        return download_path
 
     @staticmethod
     def __is_url_type(url_type_pattern: str, url: str):

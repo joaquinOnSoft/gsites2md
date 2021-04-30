@@ -52,6 +52,12 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertTrue(os.path.isfile(file_path))
         os.remove(file_path)
 
+    def test_download_content_from_url(self):
+        file_path = self.wrapper.download_content_from_url(self.URL, "./")
+        self.assertIsNotNone(file_path)
+        self.assertTrue(os.path.isfile(file_path))
+        os.remove(file_path)
+
     def test_get_content_id_from_url(self):
         file_id = self.wrapper.get_content_id_from_url(self.URL)
         self.assertIsNotNone(file_id)
