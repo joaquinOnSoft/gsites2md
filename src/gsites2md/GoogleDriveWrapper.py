@@ -235,8 +235,11 @@ class GoogleDriveWrapper:
         local environment
         :param replicate_google_drive_folder_structure: Flag to indicate if Google Drive folder structure must be
         replicated under the local path or not.1
-        :return:
+        :return: Local path of the downloaded file, None if the file doesn't exist
+        (usually a 404 happens when you try to download the file)
         """
+        error_on_download = False
+
         if replicate_google_drive_folder_structure:
             path = self.__replicate_google_drive_folder_structure(file_id, path)
 
@@ -245,17 +248,23 @@ class GoogleDriveWrapper:
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
 
-        done = False
-        while done is False:
-            status, done = downloader.next_chunk()
-            logging.debug("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
+        try:
+            done = False
+            while done is False:
+                status, done = downloader.next_chunk()
+                logging.debug("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
+        except HttpError as e:
+            logging.error(f"Error downloading file: {e.status_code} - {e.error_details}")
+            error_on_download = True
 
-        # The file has been downloaded into RAM, now save it in a file
-        # https://stackoverflow.com/questions/60111361/how-to-download-a-file-from-google-drive-using-python-and-the-drive-api-v3
-        downloaded_file_path = os.path.join(path, file_name)
-        fh.seek(0)
-        with open(downloaded_file_path, 'wb') as f:
-            shutil.copyfileobj(fh, f)
+        downloaded_file_path = None
+        if not error_on_download:
+            # The file has been downloaded into RAM, now save it in a file
+            # https://stackoverflow.com/questions/60111361/how-to-download-a-file-from-google-drive-using-python-and-the-drive-api-v3
+            downloaded_file_path = os.path.join(path, file_name)
+            fh.seek(0)
+            with open(downloaded_file_path, 'wb') as f:
+                shutil.copyfileobj(fh, f)
 
         return downloaded_file_path
 

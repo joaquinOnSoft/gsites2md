@@ -18,6 +18,7 @@ class TestGoogleDriveWrapper(unittest.TestCase):
     FILE_UNDER_FOLDER_HIERARCHY_ID = "1Vgfp5pWzI1YBBF819HZq5LVyO68z9yeq"
 
     GOOGLE_DRIVE_FILE_URL = "https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing"
+    FILE_ID_NOT_EXISTS = "0B-t5SY0w2S8ia3YxRHg3Yk96Um8"
 
     GOOGLE_DRIVE_FOLDER_URL = "https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0"
     FOLDER_ID = "0B-t5SY0w2S8icVFyLURtUVNQQVU"
@@ -118,9 +119,13 @@ class TestGoogleDriveWrapper(unittest.TestCase):
 
         folder = os.path.dirname(file_path)
         if folder != "." and folder != "./":
-            os.remove(folder)
+            shutil.rmtree(folder)
         else:
             os.remove(file_path)
+
+    def test_download_file_from_id_not_exists(self):
+        file_path = self.wrapper.download_file_from_id(self.FILE_ID_NOT_EXISTS, "./", "file_not_found.pdf")
+        self.assertIsNone(file_path)
 
     def test_download_file_from_id(self):
         file_path = self.wrapper.download_file_from_id(self.FILE_ID, "./", self.FILE_NAME)
