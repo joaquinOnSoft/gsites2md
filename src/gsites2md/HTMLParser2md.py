@@ -158,7 +158,7 @@ class HTMLParser2md(HTMLParser):
 
         if g_drive_file_downloaded is not None:
             # TODO avoid hardcoded path.
-            g_drive_file_downloaded = g_drive_file_downloaded.replace(download_path, "/downloads/")
+            g_drive_file_downloaded = g_drive_file_downloaded.replace(download_path, "/downloads")
             logging.debug(f"New local SERVER path: {g_drive_file_downloaded}")
             new_url = g_drive_file_downloaded
 

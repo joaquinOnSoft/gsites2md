@@ -98,6 +98,8 @@ class GoogleDriveWrapper:
             results = self.service.files().get(fileId=content_id, fields="id, name, parents, mimeType").execute()
         except HttpError as e:
             logging.debug(f"{e.resp.status} - {e.resp.reason}  - Recovering content metadata from URL: {e.uri}")
+        except ConnectionResetError as e:
+            logging.debug(f"{e.resp.status} - {e.resp.reason}  - Recovering content metadata from URL: {e.uri}")
 
         return results
 
