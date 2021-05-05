@@ -25,7 +25,11 @@ def main(argv):
 
     # Initialize logging component
     # SEE: https://docs.python.org/3/howto/logging.html
-    logging.basicConfig(filename='HTML2md.log', filemode='w', level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s %(levelname)-8s {%(filename)s:%(lineno)d} %(message)s',
+                        filename='HTML2md.log',
+                        filemode='w',
+                        level=logging.DEBUG,
+                        datefmt='%Y-%m-%d %H:%M:%S')
     logging.info('Started')
 
     try:

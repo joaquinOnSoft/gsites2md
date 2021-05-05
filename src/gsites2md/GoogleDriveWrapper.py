@@ -261,6 +261,7 @@ class GoogleDriveWrapper:
                 while done is False:
                     status, done = downloader.next_chunk()
                     logging.debug("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
+                # File successfully downloaded. Exit loop
                 break
             except HttpError as e:
                 logging.error(f"Error downloading file: {e.uri} - {e.resp.status} - {e.resp.reason}")
@@ -273,6 +274,7 @@ class GoogleDriveWrapper:
                 error_on_download = True
 
             number_retries += 1
+            logging.info(f"Retrying download: {file_id} - {file_name}")
 
         downloaded_file_path = None
         if not error_on_download:
