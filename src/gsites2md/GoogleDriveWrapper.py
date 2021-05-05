@@ -37,6 +37,10 @@ class GoogleDriveWrapper:
     CONTENT_TYPE_FILE = "file"
     CONTENT_TYPE_FOLDER = "folder"
 
+    HTTP_ERROR_404 = 404
+
+    MAX_NUMBER_RETRIES = 5
+
     def __init__(self):
         """
         Shows basic usage of the Drive v3 API.
@@ -241,6 +245,7 @@ class GoogleDriveWrapper:
         (usually a 404 happens when you try to download the file)
         """
         error_on_download = False
+        number_retries = 0
 
         if replicate_google_drive_folder_structure:
             path = self.__replicate_google_drive_folder_structure(file_id, path)
@@ -250,14 +255,24 @@ class GoogleDriveWrapper:
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
 
-        try:
-            done = False
-            while done is False:
-                status, done = downloader.next_chunk()
-                logging.debug("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
-        except HttpError as e:
-            logging.error(f"Error downloading file: {e.status_code} - {e.error_details}")
-            error_on_download = True
+        while number_retries < GoogleDriveWrapper.MAX_NUMBER_RETRIES:
+            try:
+                done = False
+                while done is False:
+                    status, done = downloader.next_chunk()
+                    logging.debug("Download %s: %d%%." % (file_name, int(status.progress() * 100)))
+                break
+            except HttpError as e:
+                logging.error(f"Error downloading file: {e.uri} - {e.resp.status} - {e.resp.reason}")
+                error_on_download = True
+                if e.status_code == GoogleDriveWrapper.HTTP_ERROR_404:
+                    # Retry not needed
+                    break
+            except ConnectionResetError as e:
+                logging.error(f"Error downloading file: {e.uri} - {e.resp.status} - {e.resp.reason}")
+                error_on_download = True
+
+            number_retries += 1
 
         downloaded_file_path = None
         if not error_on_download:
