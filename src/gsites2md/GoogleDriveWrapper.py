@@ -264,13 +264,16 @@ class GoogleDriveWrapper:
                 # File successfully downloaded. Exit loop
                 break
             except HttpError as e:
-                logging.error(f"Error downloading file: {e.uri} - {e.resp.status} - {e.resp.reason}")
+                logging.error(f"HTTP Error downloading file: {e.uri} - {e.resp.status} - {e.resp.reason}")
                 error_on_download = True
                 if e.status_code == GoogleDriveWrapper.HTTP_ERROR_404:
                     # Retry not needed
                     break
             except ConnectionResetError as e:
-                logging.error(f"Error downloading file: {e.uri} - {e.resp.status} - {e.resp.reason}")
+                logging.error(f"Connection Reset Error downloading file: {e.uri} - {e.resp.status} - {e.resp.reason}")
+                error_on_download = True
+            except Exception as e:
+                logging.error(f"Error downloading file: {str(e)}")
                 error_on_download = True
 
             number_retries += 1

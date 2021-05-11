@@ -25,7 +25,7 @@ def main(argv):
 
     # Initialize logging component
     # SEE: https://docs.python.org/3/howto/logging.html
-    logging.basicConfig(format='%(asctime)s %(levelname)-8s {%(filename)s:%(lineno)d} %(message)s',
+    logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(lineno)d]%(filename)s: %(message)s',
                         filename='HTML2md.log',
                         filemode='w',
                         level=logging.DEBUG,
