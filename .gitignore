@@ -7,4 +7,5 @@ __pycache__/
 .DS_Store
 .idea/
 venv/
-
+token.json
+HTML2md.log

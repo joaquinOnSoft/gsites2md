@@ -1,7 +1,10 @@
+import logging
 import re
+import ntpath
 
 from html.parser import HTMLParser
 from gsites2md.HTML2mdConverter import HTML2mdConverter
+from gsites2md.GoogleDriveWrapper import GoogleDriveWrapper
 
 
 class HTMLParser2md(HTMLParser):
@@ -42,8 +45,15 @@ class HTMLParser2md(HTMLParser):
     # Unordered list tag: <ul>
     HTML_TAG_UL = "ul"
 
-    def __init__(self):
+    def __init__(self, replace_google_drive_links: bool = False, downloads: str = '.'):
         super().__init__()
+
+        self.replace_google_drive_links = replace_google_drive_links
+        self.downloads = downloads
+
+        if replace_google_drive_links:
+            self.g_drive = GoogleDriveWrapper()
+
         self.reset()
         self._md = ""
 
@@ -87,12 +97,19 @@ class HTMLParser2md(HTMLParser):
             self.ignore_tags = True
 
         if self.ignore_tags:
-            self.ignore_tags_counter += 1
+            # <input> tags are not closed on  google site header
+            if tag != "input":
+                self.ignore_tags_counter += 1
             return
 
         if tag == self.HTML_TAG_A:
             self.href = HTML2mdConverter.get_attribute_by_name(attrs, "href")
             self.a_data = ""
+
+            # Manage Google Drive links. Download the file and replace the link for a a local reference
+            if self.replace_google_drive_links and self.g_drive.is_google_drive_url(self.href):
+                self.href = self.manage_google_drive_url(self.href, self.downloads)
+
             self.links.append(self.href)
         elif tag == self.HTML_TAG_BR:
             # Ignore <br> inside a table cell
@@ -133,6 +150,20 @@ class HTMLParser2md(HTMLParser):
 
         self._md += html2md
 
+    def manage_google_drive_url(self, url, download_path):
+        new_url = url
+
+        g_drive_file_downloaded = self.g_drive.download_content_from_url(url, download_path)
+        logging.debug(f"New local path: {g_drive_file_downloaded}")
+
+        if g_drive_file_downloaded is not None:
+            # TODO avoid hardcoded path.
+            g_drive_file_downloaded = g_drive_file_downloaded.replace(download_path, "/downloads")
+            logging.debug(f"New local SERVER path: {g_drive_file_downloaded}")
+            new_url = g_drive_file_downloaded
+
+        return new_url
+
     def handle_endtag(self, tag):
         self.last_tag_full_parsed = True
 
@@ -146,7 +177,10 @@ class HTMLParser2md(HTMLParser):
             self._md += HTML2mdConverter.a(self.href, self.a_data)
             self.href = None
             self.a_data = None
-        elif tag == self.HTML_TAG_H1 or tag == self.HTML_TAG_H2 or tag == self.HTML_TAG_H3 or tag == self.HTML_TAG_H4 or tag == self.HTML_TAG_H5 or tag == self.HTML_TAG_H6 or tag == self.HTML_TAG_H7 or tag == self.HTML_TAG_H8:
+        elif tag == self.HTML_TAG_H1 or tag == self.HTML_TAG_H2 or \
+                tag == self.HTML_TAG_H3 or tag == self.HTML_TAG_H4 or \
+                tag == self.HTML_TAG_H5 or tag == self.HTML_TAG_H6 or \
+                tag == self.HTML_TAG_H7 or tag == self.HTML_TAG_H8:
             self._md += "\n"
         elif tag == self.HTML_TAG_OL or tag == self.HTML_TAG_UL:
             self.__pop_nested_list()
@@ -199,7 +233,7 @@ class HTMLParser2md(HTMLParser):
             self._md += html2md
 
     def error(self, message):
-        print(message)
+        logging.debug(message)
 
     def __push_nested_list(self, tag: str):
         self.nested_list.append(tag)
@@ -247,5 +281,3 @@ class HTMLParser2md(HTMLParser):
         if self.last_cell is None:
             md = "\n"
         return md
-
-
