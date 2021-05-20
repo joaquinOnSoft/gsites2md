@@ -107,8 +107,7 @@ class HTML2mdConverter:
     @staticmethod
     def title(data: str) -> str:
         meta = "---\n"
-        meta += f'title = {data}\n'
-        meta += 'language = yaml\n'
+        meta += f'title: {data}\n'
         meta += "---\n"
         return meta
 

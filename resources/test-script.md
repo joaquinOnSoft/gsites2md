@@ -1,6 +1,5 @@
 ---
-title = Title
-language = yaml
+title: Title
 ---
 
 

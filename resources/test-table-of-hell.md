@@ -1,6 +1,5 @@
 ---
-title = Title
-language = yaml
+title: Title
 ---
 
 |  Bloque | [Enunciados](/home/recursos/recursospau/ficheros-enunciados-pau-fisica) |  Soluciones | [Apuntes](/home/recursos/recursos-apuntes/apuntes-elaboracion-propia-fisica-2-bachillerato) | [Extra](/home/recursos/ejercicios/ejercicios-elaboracion-propia-fisica-2-bachillerato) | 
