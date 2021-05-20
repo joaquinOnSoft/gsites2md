@@ -15,6 +15,15 @@ class TestHTML2mdConverter(TestCase):
         self.assertEqual("[Recursos](/recursos)", HTML2mdConverter.a("/recursos", "Recursos"))
         self.assertEqual("[Github](http://www.github.com)", HTML2mdConverter.a("http://www.github.com", "Github"))
 
+    def test_a_with_fiquipedia_backup_link(self):
+        url = "https://sites.google.com/site/fiquipediabackup05mar2018/home/recursos/ejercicios/ejercicios" \
+              "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
+        expected_url_link = "/home/recursos/ejercicios/ejercicios" \
+                            "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
+        expected_url_text = "https://www.fiquipedia.es/home/recursos/ejercicios/ejercicios" \
+                            "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
+        self.assertEqual(f'[{expected_url_text}]({expected_url_link})', HTML2mdConverter.a(url, url))
+
     def test_blockquote(self):
         quote = "This is the AK-47 assault rifle, \nthe preferred weapon of your enemy;"
         md_quote = "> This is the AK-47 assault rifle, \n> the preferred weapon of your enemy;\n"
@@ -81,3 +90,6 @@ class TestHTML2mdConverter(TestCase):
         attrs = []
         self.assertFalse(HTML2mdConverter.is_tag_ignored("div", attrs))
 
+    def test_title(self):
+        self.assertEqual("---\ntitle: Recursos Física - Cinética\n---\n",
+                         HTML2mdConverter.title("Recursos Física: Cinética"))

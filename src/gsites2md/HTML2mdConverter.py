@@ -19,6 +19,8 @@ class HTML2mdConverter:
     def a(href: str, data: str) -> str:
         if data:
             data = re.sub(r'\s+', " ", data)
+            data = data.replace("http://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es") \
+                .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es")
         else:
             data = ""
 
@@ -27,6 +29,7 @@ class HTML2mdConverter:
                 .replace("http://www.fiquipedia.es", "") \
                 .replace("https://fiquipedia.es", "") \
                 .replace("https://www.fiquipedia.es", "") \
+                .replace("http://sites.google.com/site/fiquipediabackup05mar2018", "") \
                 .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "")
 
         if href == "":
@@ -107,7 +110,7 @@ class HTML2mdConverter:
     @staticmethod
     def title(data: str) -> str:
         meta = "---\n"
-        meta += f'title: {data}\n'
+        meta += f'title: {data.replace(":", " -")}\n'
         meta += "---\n"
         return meta
 
