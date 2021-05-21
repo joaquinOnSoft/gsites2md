@@ -21,6 +21,20 @@ class TestHTML2mdConverter(TestCase):
         self.assertEqual(" [PAU Fisica](/recursospau/pau-fisica) ",
                          HTML2mdConverter.a("https://www.fiquipedia.es/recursospau/pau-fisica.html", "PAU Fisica"))
 
+    def test_a_remove_html_extension(self):
+        self.assertEqual(
+            " [Dictamen 142016](http://www.educacionyfp.gob.es/dctm/cee/el-consejo/dictamenes/2016/dictamen142016.pdf) ",
+            HTML2mdConverter.a("http://www.mecd.gob.es/dctm/cee/el-consejo/dictamenes/2016/dictamen142016.pdf",
+                               "Dictamen 142016"))
+
+    def test_a_site_google_groups_com(self):
+        self.assertEqual(
+            " [Problemas Fisica Dinamica Presion](/home/recursos/fisica/recursos-dinamica/ProblemasFisica-Dinamica"
+            "-Presion.pdf) ",
+            HTML2mdConverter.a("http://a0286e09-a-62cb3a1a-s-sites.googlegroups.com/site/fiquipediabackup05mar2018"
+                               "/home/recursos/fisica/recursos-dinamica/ProblemasFisica-Dinamica-Presion.pdf",
+                               "Problemas Fisica Dinamica Presion"))
+
     def test_a_with_fiquipedia_backup_link(self):
         url = "https://sites.google.com/site/fiquipediabackup05mar2018/home/recursos/ejercicios/ejercicios" \
               "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"

@@ -19,9 +19,13 @@ class HTML2mdConverter:
     def a(href: str, data: str) -> str:
         if data:
             data = re.sub(r'\s+', " ", data)
+
             # Replace Google Sites backup site URL for main site URLs
             data = data.replace("http://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es") \
                 .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es")
+
+            if data.startswith("http://www.mecd.gob.es"):
+                data = data.replace("http://www.mecd.gob.es", "http://www.educacionyfp.gob.es")
         else:
             data = ""
 
@@ -32,7 +36,12 @@ class HTML2mdConverter:
                 .replace("https://fiquipedia.es", "") \
                 .replace("https://www.fiquipedia.es", "") \
                 .replace("http://sites.google.com/site/fiquipediabackup05mar2018", "") \
-                .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "")
+                .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "") \
+                .replace("http://a0286e09-a-62cb3a1a-s-sites.googlegroups.com/site/fiquipediabackup05mar2018", "")
+
+            # Replace MEC urls for the new one
+            if href.startswith("http://www.mecd.gob.es"):
+                href = href.replace("http://www.mecd.gob.es", "http://www.educacionyfp.gob.es")
 
             # Remove ".html" extension from fiquipedia URL
             if (href.startswith("http://www.fiquipedia.es") or
