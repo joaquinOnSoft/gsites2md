@@ -18,7 +18,7 @@ class TestGoogleDriveWrapper(unittest.TestCase):
     FILE_UNDER_FOLDER_HIERARCHY_ID = "1Vgfp5pWzI1YBBF819HZq5LVyO68z9yeq"
 
     GOOGLE_DRIVE_FILE_URL = "https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing"
-    FILE_ID_NOT_EXISTS = "0B-t5SY0w2S8ia3YxRHg3Yk96Um8"
+    FILE_ID_NOT_EXISTS = "0B-t5SY0w2A9aa9AaAAa9Aa99Aa9"
 
     GOOGLE_DRIVE_FOLDER_URL = "https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0"
     FOLDER_ID = "0B-t5SY0w2S8icVFyLURtUVNQQVU"
