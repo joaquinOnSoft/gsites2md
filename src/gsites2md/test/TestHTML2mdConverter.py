@@ -15,6 +15,12 @@ class TestHTML2mdConverter(TestCase):
         self.assertEqual(" [Recursos](/recursos) ", HTML2mdConverter.a("/recursos", "Recursos"))
         self.assertEqual(" [Github](http://www.github.com) ", HTML2mdConverter.a("http://www.github.com", "Github"))
 
+    def test_a_remove_html_extension(self):
+        self.assertEqual(" [Evaluaciones](../evaluaciones-finales-bachillerato) ",
+                         HTML2mdConverter.a("../evaluaciones-finales-bachillerato.html", "Evaluaciones"))
+        self.assertEqual(" [PAU Fisica](/recursospau/pau-fisica) ",
+                         HTML2mdConverter.a("https://www.fiquipedia.es/recursospau/pau-fisica.html", "PAU Fisica"))
+
     def test_a_with_fiquipedia_backup_link(self):
         url = "https://sites.google.com/site/fiquipediabackup05mar2018/home/recursos/ejercicios/ejercicios" \
               "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"

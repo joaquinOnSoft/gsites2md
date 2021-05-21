@@ -19,18 +19,27 @@ class HTML2mdConverter:
     def a(href: str, data: str) -> str:
         if data:
             data = re.sub(r'\s+', " ", data)
+            # Replace Google Sites backup site URL for main site URLs
             data = data.replace("http://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es") \
                 .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es")
         else:
             data = ""
 
         if href:
+            # Replace absolute URL with local paths
             href = href.replace("http://fiquipedia.es", "") \
                 .replace("http://www.fiquipedia.es", "") \
                 .replace("https://fiquipedia.es", "") \
                 .replace("https://www.fiquipedia.es", "") \
                 .replace("http://sites.google.com/site/fiquipediabackup05mar2018", "") \
                 .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "")
+
+            # Remove ".html" extension from fiquipedia URL
+            if (href.startswith("http://www.fiquipedia.es") or
+                href.startswith("https://www.fiquipedia.es") or
+                href.startswith("..") or href.startswith("/")) and \
+                    (href.endswith(".html") or href.endswith(".html")):
+                href = href.replace(".html", "").replace(".htm", "")
 
         if href == "":
             href = "/"
