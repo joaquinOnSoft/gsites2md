@@ -6,14 +6,14 @@ from ..HTML2mdConverter import HTML2mdConverter
 class TestHTML2mdConverter(TestCase):
 
     def test_a(self):
-        self.assertEqual("[Fiquipedia](/)", HTML2mdConverter.a("https://fiquipedia.es", "Fiquipedia"))
-        self.assertEqual("[Fiquipedia](/)", HTML2mdConverter.a("https://www.fiquipedia.es", "Fiquipedia"))
-        self.assertEqual("[Fiquipedia](/)", HTML2mdConverter.a("http://fiquipedia.es", "Fiquipedia"))
-        self.assertEqual("[Fiquipedia](/)", HTML2mdConverter.a("http://www.fiquipedia.es", "Fiquipedia"))
-        self.assertEqual("[Fiquipedia is cool](/)",
+        self.assertEqual(" [Fiquipedia](/) ", HTML2mdConverter.a("https://fiquipedia.es", "Fiquipedia"))
+        self.assertEqual(" [Fiquipedia](/) ", HTML2mdConverter.a("https://www.fiquipedia.es", "Fiquipedia"))
+        self.assertEqual(" [Fiquipedia](/) ", HTML2mdConverter.a("http://fiquipedia.es", "Fiquipedia"))
+        self.assertEqual(" [Fiquipedia](/) ", HTML2mdConverter.a("http://www.fiquipedia.es", "Fiquipedia"))
+        self.assertEqual(" [Fiquipedia is cool](/) ",
                          HTML2mdConverter.a("http://fiquipedia.es", "Fiquipedia \n\n\t is cool"))
-        self.assertEqual("[Recursos](/recursos)", HTML2mdConverter.a("/recursos", "Recursos"))
-        self.assertEqual("[Github](http://www.github.com)", HTML2mdConverter.a("http://www.github.com", "Github"))
+        self.assertEqual(" [Recursos](/recursos) ", HTML2mdConverter.a("/recursos", "Recursos"))
+        self.assertEqual(" [Github](http://www.github.com) ", HTML2mdConverter.a("http://www.github.com", "Github"))
 
     def test_a_with_fiquipedia_backup_link(self):
         url = "https://sites.google.com/site/fiquipediabackup05mar2018/home/recursos/ejercicios/ejercicios" \
@@ -22,7 +22,7 @@ class TestHTML2mdConverter(TestCase):
                             "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
         expected_url_text = "https://www.fiquipedia.es/home/recursos/ejercicios/ejercicios" \
                             "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
-        self.assertEqual(f'[{expected_url_text}]({expected_url_link})', HTML2mdConverter.a(url, url))
+        self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url))
 
     def test_blockquote(self):
         quote = "This is the AK-47 assault rifle, \nthe preferred weapon of your enemy;"

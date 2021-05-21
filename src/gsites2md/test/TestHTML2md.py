@@ -52,6 +52,10 @@ class TestHTML2md(TestCase):
         self.__process("fiquipedia.es/recursos/recursos-tecnologia.html",
                        "fiquipedia.es/recursos/recursos-tecnologia.md")
 
+    def test_ignore_toc(self):
+        self.__process("fiquipedia.es/recursos/recursospau/recursos-pau-genericos.html",
+                       "fiquipedia.es/recursos/recursospau/recursos-pau-genericos.md")
+
     def test_ignore_gsites_header(self):
         self.__process("test-ignore-gsites-header.html", "test-ignore-gsites-header.md")
 

@@ -35,7 +35,7 @@ class HTML2mdConverter:
         if href == "":
             href = "/"
 
-        return f'[{data}]({href})'
+        return f' [{data}]({href}) '
 
     @staticmethod
     def blockquote(data: str) -> str:
@@ -162,7 +162,9 @@ class HTML2mdConverter:
             # Google sites footer
             ["div", "id", "sites-chrome-footer"],
             # Google sites admin footer
-            ["div", "id", "sites-chrome-adminfooter-container"]
+            ["div", "id", "sites-chrome-adminfooter-container"],
+            # Table Of Contents (TOC)
+            ["div", "class", "goog-toc sites-embed-toc-maxdepth-6"]
         ]
 
         for i_tag in ignore_list:

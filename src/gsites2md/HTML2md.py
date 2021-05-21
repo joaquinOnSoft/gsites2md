@@ -48,7 +48,8 @@ class HTML2md:
                     shutil.copy2(f_in_name, f_out_name)
 
     @staticmethod
-    def __process_file(input_name: str, output_name: str, replace_google_drive_links: bool = False, downloads: str = '.'):
+    def __process_file(input_name: str, output_name: str, replace_google_drive_links: bool = False,
+                       downloads: str = '.'):
         """
         Convert and HTML file in a Markdown file.
         :param input_name: Input file name
@@ -63,9 +64,17 @@ class HTML2md:
         parser.feed(html_txt)
         md = parser.md
 
+        md = HTML2md.__remove_useless_md(md)
+
         if output_name is None:
             output_name = input_name.replace('.html', '.md').replace('.htm', '.md')
         f = open(output_name, "w")
         f.write(md)
         f.close()
 
+    @staticmethod
+    def __remove_useless_md(md: str) -> str:
+        if md is not None:
+            md = md.replace("\n|  | \n", "")
+
+        return md
