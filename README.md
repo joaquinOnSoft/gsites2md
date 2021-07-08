@@ -38,7 +38,57 @@ beautifulsoup4
 google-api-python-client
 google-auth-oauthlib
 ```
-## Unit testing
-> In order to execute the unit test that download content from Google Drive 
-> you must have access to the Google Drive account where the content is stored. 
 
+### Enable the Google Drive API
+To get started integrating with the Google Drive UI, you need to enable the Drive API within your app's 
+Cloud Platform project and provide configuration details.
+
+Please see [Enable the Google Drive API](https://developers.google.com/drive/api/v3/enable-drive-api)
+
+## Unit testing
+> In order to execute the unit test that downloads content from Google Drive, you must have access to the 
+> Google Drive account where the content is stored. 
+
+## Download a copy of a website
+
+This application needs a local copy of a website (www.fiquipedia.es) to use as input. The source HTML will be 
+converted to Markdown.
+
+### Prerequisites on Linux (Ubuntu/Debian)
+#### Install 'wget'
+> $ apt-get install wget
+
+### Prerequisites on Mac
+#### Install Homebrew
+> $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+#### Install 'wget'
+> $ brew install wget
+
+### Using 'wget' to download a local copy of a website
+> wget --content-disposition --recursive -p http://www.fiquipedia.es
+
+### URL parameters in file names downloaded by wget 
+
+If the server is kind, it might be sticking a Content-Disposition header on 
+the download advising your client of the correct filename. Telling `wget` to 
+listen to that header for the final filename is as simple as:
+
+> wget --content-disposition
+
+Otherwise, you need to execute this script to remove the URL parameters from
+the file names added by wget` 
+
+```sh
+# /bin/bash
+for i in `find $1 -type f`
+do
+    output=`echo $i | cut -d? -f1`
+    if [ $i != $output ]
+    then
+        mv $i $ouput
+    else
+        echo "Skiping $i"
+    fi
+done
+```

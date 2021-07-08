@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 
+from gsites2md.URLUtils import URLUtils
 from gsites2md.HTMLParser2md import HTMLParser2md
 
 
@@ -39,7 +40,11 @@ class HTML2md:
                 f_in_name = os.path.join(dir_path, filename)
                 f_out_name = f_in_name.replace(input_folder_name, output_folder_name)
 
-                if f_in_name.endswith(".html") or f_in_name.endswith(".htm"):
+                if URLUtils.is_friendly_url(f_in_name):
+                    f_out_name = f_out_name + ".md"
+                    logging.debug("HTML2MD: " + f_in_name)
+                    HTML2md.__process_file(f_in_name, f_out_name, replace_google_drive_links, downloads)
+                elif URLUtils.is_html(f_in_name):
                     f_out_name = f_out_name.replace(".html", ".md").replace(".htm", ".md")
                     logging.debug("HTML2MD: " + f_in_name)
                     HTML2md.__process_file(f_in_name, f_out_name, replace_google_drive_links, downloads)
