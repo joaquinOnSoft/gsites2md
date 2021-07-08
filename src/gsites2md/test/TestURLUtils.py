@@ -23,7 +23,7 @@ class TestURLUtils(TestCase):
         self.assertFalse(URLUtils.is_friendly_url(path))
 
         path = self.base_path + "fiquipedia.es/recursos/FiquipediaQR.png?height=320&width=320"
-        self.assertFalse(URLUtils.is_html(path))
+        self.assertFalse(URLUtils.is_friendly_url(path))
 
         path = self.base_path + "test"
         self.assertTrue(URLUtils.is_friendly_url(path))

@@ -7,5 +7,6 @@ __pycache__/
 .DS_Store
 .idea/
 venv/
+credentials.json
 token.json
 HTML2md.log

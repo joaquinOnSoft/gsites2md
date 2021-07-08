@@ -70,14 +70,14 @@ converted to Markdown.
 
 ### URL parameters in file names downloaded by wget 
 
-If the server is kind, it might be sticking a Content-Disposition header on 
+If the server is kind, it might be sticking a `Content-Disposition header on 
 the download advising your client of the correct filename. Telling `wget` to 
 listen to that header for the final filename is as simple as:
 
 > wget --content-disposition
 
 Otherwise, you need to execute this script to remove the URL parameters from
-the file names added by wget` 
+the file names added by `wget` 
 
 ```sh
 # /bin/bash
