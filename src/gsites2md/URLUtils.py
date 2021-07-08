@@ -23,6 +23,8 @@ class URLUtils:
         """
         friendly_url = True
 
+        # If the file name contains URL parameters
+        # 'os.path.isfile' and 'os.path.isdir' returns false
         if os.path.isfile(path) or (not os.path.isfile(path) and not os.path.isdir(path)):
             last_dot = path.rfind(".")
             last_separator = path.rfind(os.path.sep)
