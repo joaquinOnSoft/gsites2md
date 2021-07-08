@@ -21,5 +21,13 @@ class URLUtils:
         :param path: File's full path
         :return: True if is a friendly URL, False in other case
         """
-        matches = re.findall("(\\.)[a-z,0-9]+(\\?)*", path)
-        return matches is None or len(matches) == 0
+        friendly_url = True
+
+        if os.path.isfile(path) or (not os.path.isfile(path) and not os.path.isdir(path)):
+            last_dot = path.rfind(".")
+            last_separator = path.rfind(os.path.sep)
+
+            if last_separator < last_dot:
+                friendly_url = False
+
+        return friendly_url
