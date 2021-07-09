@@ -1,5 +1,5 @@
 import re
-
+from urllib.parse import unquote
 
 class HTML2mdConverter:
     H1 = "\n\n# "
@@ -26,6 +26,10 @@ class HTML2mdConverter:
 
             if data.startswith("http://www.mecd.gob.es"):
                 data = data.replace("http://www.mecd.gob.es", "http://www.educacionyfp.gob.es")
+
+            # Url decode UTF-8 in Python
+            # https://stackoverflow.com/questions/16566069/url-decode-utf-8-in-python
+            data = unquote(data)
         else:
             data = ""
 

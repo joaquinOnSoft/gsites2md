@@ -49,7 +49,7 @@ class TestHTML2mdConverter(TestCase):
         #   https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf
         # </a>
         url = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
-        expected_url_text = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
+        expected_url_text = "https://www.serina.es/empresas/cede_muestra/106/TEMA MUESTRA.pdf"
         expected_url_link = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
         self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url))
 
