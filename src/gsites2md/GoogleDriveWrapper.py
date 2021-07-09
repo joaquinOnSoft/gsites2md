@@ -4,6 +4,11 @@ import os.path
 import re
 import shutil
 
+# socket.timeout with will cause api client to become unusable
+# https://github.com/googleapis/google-api-python-client/issues/563#issuecomment-738363829
+import socket
+socket.setdefaulttimeout(4000)
+
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request

@@ -44,6 +44,15 @@ class TestHTML2mdConverter(TestCase):
                             "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
         self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url))
 
+    def test_a_with_white_spaces(self):
+        # <a href="https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf">
+        #   https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf
+        # </a>
+        url = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
+        expected_url_text = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
+        expected_url_link = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
+        self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url))
+
     def test_blockquote(self):
         quote = "This is the AK-47 assault rifle, \nthe preferred weapon of your enemy;"
         md_quote = "> This is the AK-47 assault rifle, \n> the preferred weapon of your enemy;\n"
