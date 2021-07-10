@@ -218,7 +218,8 @@ class HTMLParser2md(HTMLParser):
                 "script": HTML2mdConverter.ignore_tag(data),
                 "strong": HTML2mdConverter.strong(data),
                 "style": HTML2mdConverter.ignore_tag(data),
-                "title": HTML2mdConverter.title(data),
+                # "title": HTML2mdConverter.title(data),
+                "title": HTML2mdConverter.ignore_tag(data),
                 # The <var> tag is used to defines a variable in programming or
                 # in a mathematical expression. The content inside is typically displayed in italic.
                 "var": HTML2mdConverter.var(data)

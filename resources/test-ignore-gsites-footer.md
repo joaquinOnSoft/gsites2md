@@ -1,6 +1,3 @@
----
-title: Title
----
 
 
 # Title H1
