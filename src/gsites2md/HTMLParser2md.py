@@ -238,6 +238,9 @@ class HTMLParser2md(HTMLParser):
 
             self._md += html2md
 
+    def handle_comment(self, data):
+        return HTML2mdConverter.comment(data)
+
     def error(self, message):
         logging.debug(message)
 

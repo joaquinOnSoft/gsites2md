@@ -45,6 +45,9 @@ class TestHTML2md(TestCase):
     def test_table_of_hell(self):
         self.__process("test-table-of-hell.html", "test-table-of-hell.md")
 
+    def test_table_recursos_opos(self):
+        self.__process("test-table-recursos-opos.html", "test-table-recursos-opos.md")
+
     # def test_pau_fisica(self):
     #    self.__process("fiquipedia.es/pruebasaccesouniversidad/paufisica.html", "test-header.md")
 

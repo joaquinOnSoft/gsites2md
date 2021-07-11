@@ -1,6 +1,7 @@
 import re
 from urllib.parse import unquote
 
+
 class HTML2mdConverter:
     H1 = "\n\n# "
     H2 = "\n\n## "
@@ -151,6 +152,17 @@ class HTML2mdConverter:
         :return: Markdown for Inline code
         """
         return "`" + data + "`"
+
+    @staticmethod
+    def comment(data: str) -> str:
+        """
+        Manage HTML comments
+        SEE: https://stackoverflow.com/questions/4823468/comments-in-markdown
+        :param data: Text inside the comment tag
+        :return: Markdown for HTML comment
+        """
+        comment = data.replace("\n", " ")
+        return f'[//]: # ({comment})'
 
     @staticmethod
     def default_tag(data) -> str:

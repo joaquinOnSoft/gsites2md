@@ -27,7 +27,6 @@ class TestHTMLParser2md(TestCase):
         attrs = [("src", "img/fiquipedia.png"), ("alt", "Fiquipedia logo"), ("title", "Fiquipedia")]
         self.assertEqual("![Fiquipedia logo](img/fiquipedia.png \"Fiquipedia\")\n", self.parser.img(attrs))
 
-
     def test_md(self):
         md = "---\n\n|  | \n### Recursos\n |  | \n"
         self.parser.md = md
