@@ -117,13 +117,20 @@ class HTML2mdConverter:
 
     @staticmethod
     def img(attrs) -> str:
-        alt = ""
-        link = ""
-
-        alt = HTML2mdConverter.get_attribute_by_name(attrs, "alt")
+        """
+        Generate the 'img' tag in markdown. The output will looks like this:
+            ![Alt](/path/to/img.jpg “image title”)
+        :param attrs: Attributes list of the img tag
+        :return: img tag in markdown
+        SEE: https://dev.to/stephencweiss/markdown-image-titles-and-alt-text-5fi1
+        """
         link = HTML2mdConverter.get_attribute_by_name(attrs, "src")
+        alt = HTML2mdConverter.get_attribute_by_name(attrs, "alt")
+        title = HTML2mdConverter.get_attribute_by_name(attrs, "title")
+        if title is None or title == "":
+            title = alt
 
-        return f'![{alt}]({link})\n'
+        return f'![{alt}]({link} "{title}")\n'
 
     @staticmethod
     def strong(data: str) -> str:

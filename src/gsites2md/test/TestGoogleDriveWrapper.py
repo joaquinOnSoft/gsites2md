@@ -182,3 +182,31 @@ class TestGoogleDriveWrapper(unittest.TestCase):
             os.path.isfile("./GradoMedioxComunidades/Madrid/2005-madrid-GM-CT-soluc.doc"))
 
         TestGoogleDriveWrapper.remove_folder(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
+
+    def test_replicate_file_path_from_id(self):
+        file_path = self.wrapper.replicate_file_path_from_id(self.FILE_ID, "./", self.FILE_NAME)
+        self.assertIsNotNone(file_path)
+        self.assertEqual("./TV detect ads/openimaj-tutorial-pdf.pdf", file_path)
+
+        # Cleanup. Remove folder structure created during the test
+        TestGoogleDriveWrapper.remove_folder("./TV detect ads")
+
+    def test_replicate_folder__from_id(self):
+        path = self.wrapper.replicate_folder_path_from_id(TestGoogleDriveWrapper.FOLDER_UNED_ID, ".")
+
+        self.assertEqual("./PAUxComunidades/electrotecnia/uned", path)
+        self.assertTrue(os.path.exists("./PAUxComunidades/electrotecnia/uned"))
+
+        TestGoogleDriveWrapper.remove_folder("./PAUxComunidades")
+
+    def test_replicate_folder_with_subfolders_path_from_id(self):
+        path = self.wrapper.replicate_folder_path_from_id(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_ID, ".")
+
+        self.assertIsNotNone(path)
+        self.assertEqual("./GradoMedioxComunidades", path)
+        self.assertTrue(os.path.exists("./GradoMedioxComunidades"))
+        self.assertTrue(os.path.exists("./GradoMedioxComunidades/CastillaLaMancha"))
+        self.assertTrue(os.path.exists("./GradoMedioxComunidades/Madrid"))
+
+        TestGoogleDriveWrapper.remove_folder(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
+

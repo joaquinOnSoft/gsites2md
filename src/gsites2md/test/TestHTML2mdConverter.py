@@ -90,7 +90,7 @@ class TestHTML2mdConverter(TestCase):
 
     def test_img(self):
         attrs = [("src", "img/picture1.png"), ("alt", "My first picture")]
-        self.assertEqual("![My first picture](img/picture1.png)\n", HTML2mdConverter.img(attrs))
+        self.assertEqual("![My first picture](img/picture1.png \"My first picture\")\n", HTML2mdConverter.img(attrs))
 
     def test_strong(self):
         self.assertEqual("**Hello**", HTML2mdConverter.strong("Hello"))
