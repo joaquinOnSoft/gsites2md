@@ -17,11 +17,16 @@ class TestHTMLParser2md(TestCase):
 
     def test_img(self):
         attrs = [("src", "img/fiquipedia.png"), ("alt", "Fiquipedia logo")]
-        self.assertEqual("![Fiquipedia logo](img/fiquipedia.png)\n", self.parser.img(attrs))
+        self.assertEqual("![Fiquipedia logo](img/fiquipedia.png \"Fiquipedia logo\")\n", self.parser.img(attrs))
 
         # The image is inside a link
         self.parser.href = "htt://www.fiquipedia.es"
         self.assertEqual("", self.parser.img(attrs))
+
+    def test_img_with_title(self):
+        attrs = [("src", "img/fiquipedia.png"), ("alt", "Fiquipedia logo"), ("title", "Fiquipedia")]
+        self.assertEqual("![Fiquipedia logo](img/fiquipedia.png \"Fiquipedia\")\n", self.parser.img(attrs))
+
 
     def test_md(self):
         md = "---\n\n|  | \n### Recursos\n |  | \n"

@@ -1,6 +1,3 @@
----
-title: Recursos PAU Genéricos - FiQuiPedia
----
 
 ### Recursos PAU Genéricos
 

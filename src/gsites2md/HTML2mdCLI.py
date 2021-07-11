@@ -14,13 +14,19 @@ def print_help():
     print('\t-h, --help: Print this help')
     print('\t-s, --source <source_path>: (Mandatory) source file or folder')
     print('\t-d, --dest <dest_path>: (Mandatory) destination file or folder')
-    print('\t-r, --replace : (Optional) Flag: Replace Google Drive links to local links (It\'ll download the content)')
+    print('\t-r, --replace : (Optional) Flag: Replace Google Drive links to local links '
+          '(It WON\'T download the content by default. '
+          'You must use in conjunction with --download to force the download)')
+    print('\t-D, --download : (Optional) Flag: Download Google Drive content to local drive.'
+          'This option will have effect only if is used in conjunction with --replace, '
+          'otherwise will be ignored')
 
 
 def main(argv):
     source = None
     destination = None
     replace_google_drive_links = False
+    google_drive_content_download = False
     downloads = "."
 
     # Initialize logging component
@@ -33,7 +39,7 @@ def main(argv):
     logging.info('Started')
 
     try:
-        opts, args = getopt.getopt(argv, "hs:d:r", ["help", "source=", "dest=", "replace"])
+        opts, args = getopt.getopt(argv, "hs:d:ro", ["help", "source=", "dest=", "replace", "download"])
     except getopt.GetoptError:
         print_help()
         sys.exit(2)
@@ -48,18 +54,19 @@ def main(argv):
             destination = arg
         elif opt in ("-r", "--replace"):
             replace_google_drive_links = True
-
+        elif opt in ("-D", "--download"):
+            google_drive_content_download = True
     if source and destination:
         if os.path.isfile(source) or (os.path.isdir(source) and os.path.isdir(destination)):
 
             # Check if "downloads" folder exits under "destination" folder
             if os.path.isdir(destination):
-                downloads = os.path.join(destination, "downloads")
+                downloads = os.path.join(destination, "drive")
                 if os.path.isdir(downloads) is False:
                     os.mkdir(downloads)
 
             parser = HTML2md()
-            parser.process(source, destination, replace_google_drive_links, downloads)
+            parser.process(source, destination, replace_google_drive_links, downloads, google_drive_content_download)
         else:
             print("\nWARNING: Source and Destination must be both files or both folders\n")
             sys.exit(2)
