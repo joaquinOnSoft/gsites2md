@@ -125,4 +125,4 @@ class TestHTML2mdConverter(TestCase):
 
     def test_comment(self):
         self.assertEqual("[//]: # (This is a comment)",
-                    HTML2mdConverter.comment("This is a comment"))
+                         HTML2mdConverter.comment("This is a comment"))
