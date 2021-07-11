@@ -15,9 +15,11 @@ def print_help():
     print('\t-s, --source <source_path>: (Mandatory) source file or folder')
     print('\t-d, --dest <dest_path>: (Mandatory) destination file or folder')
     print('\t-r, --replace : (Optional) Flag: Replace Google Drive links to local links '
-          '(It won\'t download the content by default. '
+          '(It WON\'T download the content by default. '
           'You must use in conjunction with --download to force the download)')
-    print('\t-D, --download : (Optional) Flag: Download Google Drive content to local drive')
+    print('\t-D, --download : (Optional) Flag: Download Google Drive content to local drive.'
+          'This option will have effect only if is used in conjunction with --replace, '
+          'otherwise will be ignored')
 
 
 def main(argv):
