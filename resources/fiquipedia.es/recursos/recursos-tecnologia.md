@@ -1,6 +1,3 @@
----
-title: Recursos tecnología - FiQuiPedia
----
 
 ### Recursos tecnología
 

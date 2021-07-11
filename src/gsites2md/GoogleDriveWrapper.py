@@ -7,6 +7,7 @@ import shutil
 # socket.timeout with will cause api client to become unusable
 # https://github.com/googleapis/google-api-python-client/issues/563#issuecomment-738363829
 import socket
+
 socket.setdefaulttimeout(4000)
 
 from googleapiclient.discovery import build
@@ -354,3 +355,66 @@ class GoogleDriveWrapper:
     def is_file(self, content_id):
         mimetype = self.get_content_metadata_by_name(content_id, GoogleDriveWrapper.METADATA_FIELD_MIMETYPE)
         return mimetype != GoogleDriveWrapper.MIME_TYPE_FOLDER
+
+    def replicate_content_path_from_url(self, url: str, path: str) -> str:
+        download_url = None
+        if self.is_google_drive_url(url):
+            content_id = self.get_content_id_from_url(url)
+
+            if content_id:
+                if self.is_file_url(url):
+                    content_name = self.get_content_name(content_id)
+                    download_url = self.replicate_file_path_from_id(content_id, path, content_name)
+                elif self.is_folder_url(url):
+                    download_url = self.download_folder_from_id(content_id, path)
+            else:
+                logging.warning(f"File name not found for URL: {url}")
+
+        return download_url
+
+    def replicate_file_path_from_id(self, file_id: str, path: str, file_name: str,
+                                    replicate_google_drive_folder_structure: bool = True) -> str:
+        """
+        Replicate the Google Drive folder structure (path) in the local drive for a shared file
+        from Google Drive
+        :param file_id: file identifier
+        :param path: local path where the file will be downloaded
+        :param file_name: File name to be used to save the file
+        local environment
+        :param replicate_google_drive_folder_structure: Flag to indicate if Google Drive folder structure must be
+        replicated under the local path or not.1
+        :return: Local path of the downloaded file, None if the file doesn't exist
+        (usually a 404 happens when you try to download the file)
+        """
+        if replicate_google_drive_folder_structure:
+            path = self.__replicate_google_drive_folder_structure(file_id, path)
+
+        request = self.service.files().get_media(fileId=file_id, fields="files(id, name)")
+
+        downloaded_file_path = os.path.join(path, file_name)
+
+        return downloaded_file_path
+
+    def replicate_folder_path_from_id(self, folder_id: str, path: str) -> str:
+        download_path = self.__replicate_google_drive_folder_structure(folder_id, path)
+
+        # Call the Drive v3 API
+        results = self.service.files().list(
+            q=f"'{folder_id}' in parents",
+            pageSize=10, fields="nextPageToken, files(id, name, mimeType)").execute()
+        items = results.get('files', [])
+
+        if not items:
+            logging.info('No files found.')
+        else:
+            logging.debug('Files:')
+            for item in items:
+                logging.debug(u'{0} ({1}) - {2}'.format(item['name'], item['id'], item['mimeType']))
+                if item['mimeType'] == self.MIME_TYPE_FOLDER:
+                    # Base path DOESN'T CHANGE for FOLDERS (the remote path is replicated under the base path)
+                    self.replicate_folder_path_from_id(item['id'], path)
+                else:
+                    # Base path CHANGES for FILES
+                    self.replicate_file_path_from_id(item['id'], download_path, item['name'], False)
+
+        return download_path

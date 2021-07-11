@@ -45,11 +45,13 @@ class HTMLParser2md(HTMLParser):
     # Unordered list tag: <ul>
     HTML_TAG_UL = "ul"
 
-    def __init__(self, replace_google_drive_links: bool = False, downloads: str = '.'):
+    def __init__(self, replace_google_drive_links: bool = False, downloads: str = '.',
+                 google_drive_content_download: bool = False):
         super().__init__()
 
         self.replace_google_drive_links = replace_google_drive_links
         self.downloads = downloads
+        self.google_drive_content_download = google_drive_content_download
 
         if replace_google_drive_links:
             self.g_drive = GoogleDriveWrapper()
@@ -153,14 +155,17 @@ class HTMLParser2md(HTMLParser):
     def manage_google_drive_url(self, url, download_path):
         new_url = url
 
-        g_drive_file_downloaded = self.g_drive.download_content_from_url(url, download_path)
-        logging.debug(f"New local path: {g_drive_file_downloaded}")
+        if self.google_drive_content_download:
+            g_drive_file_downloaded = self.g_drive.download_content_from_url(url, download_path)
+            logging.debug(f"New local path: {g_drive_file_downloaded}")
 
-        if g_drive_file_downloaded is not None:
-            # TODO avoid hardcoded path.
-            g_drive_file_downloaded = g_drive_file_downloaded.replace(download_path, "/downloads")
-            logging.debug(f"New local SERVER path: {g_drive_file_downloaded}")
-            new_url = g_drive_file_downloaded
+            if g_drive_file_downloaded is not None:
+                # TODO avoid hardcoded path.
+                g_drive_file_downloaded = g_drive_file_downloaded.replace(download_path, "/drive")
+                logging.debug(f"New local SERVER path: {g_drive_file_downloaded}")
+                new_url = g_drive_file_downloaded
+        else:
+            new_url = self.g_drive.replicate_content_path_from_url(url, download_path)
 
         return new_url
 
@@ -218,7 +223,8 @@ class HTMLParser2md(HTMLParser):
                 "script": HTML2mdConverter.ignore_tag(data),
                 "strong": HTML2mdConverter.strong(data),
                 "style": HTML2mdConverter.ignore_tag(data),
-                "title": HTML2mdConverter.title(data),
+                # "title": HTML2mdConverter.title(data),
+                "title": HTML2mdConverter.ignore_tag(data),
                 # The <var> tag is used to defines a variable in programming or
                 # in a mathematical expression. The content inside is typically displayed in italic.
                 "var": HTML2mdConverter.var(data)

@@ -1,6 +1,3 @@
----
-title: Title
----
 
 
 ## Use JavaScript to Change Text
