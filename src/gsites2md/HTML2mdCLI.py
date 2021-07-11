@@ -1,3 +1,6 @@
+import socket
+socket.setdefaulttimeout(4000)
+#https://github.com/googleapis/google-api-python-client/issues/563#issuecomment-738363829
 import getopt
 import logging
 import os
