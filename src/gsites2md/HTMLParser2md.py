@@ -152,10 +152,10 @@ class HTMLParser2md(HTMLParser):
 
         self._md += html2md
 
-    def manage_google_drive_url(self, url, download_path, google_drive_content_download):
+    def manage_google_drive_url(self, url, download_path):
         new_url = url
 
-        if google_drive_content_download:
+        if self.google_drive_content_download:
             g_drive_file_downloaded = self.g_drive.download_content_from_url(url, download_path)
             logging.debug(f"New local path: {g_drive_file_downloaded}")
 
@@ -166,7 +166,7 @@ class HTMLParser2md(HTMLParser):
                 new_url = g_drive_file_downloaded
         else:
             new_url = self.g_drive.replicate_content_path_from_url(url, download_path)
-        
+
         return new_url
 
     def handle_endtag(self, tag):
