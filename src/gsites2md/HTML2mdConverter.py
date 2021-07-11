@@ -44,6 +44,11 @@ class HTML2mdConverter:
                 .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "") \
                 .replace("http://a0286e09-a-62cb3a1a-s-sites.googlegroups.com/site/fiquipediabackup05mar2018", "")
 
+            # Can all the '?attredirects=0' be automatically removed from URLs?
+            index_att_redirects = href.find("?attredirects=0")
+            if index_att_redirects != -1:
+                href = href[0:index_att_redirects]
+
             # Replace MEC urls for the new one
             if href.startswith("http://www.mecd.gob.es"):
                 href = href.replace("http://www.mecd.gob.es", "http://www.educacionyfp.gob.es")

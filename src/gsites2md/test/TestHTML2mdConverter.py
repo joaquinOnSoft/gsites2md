@@ -15,13 +15,19 @@ class TestHTML2mdConverter(TestCase):
         self.assertEqual(" [Recursos](/recursos) ", HTML2mdConverter.a("/recursos", "Recursos"))
         self.assertEqual(" [Github](http://www.github.com) ", HTML2mdConverter.a("http://www.github.com", "Github"))
 
+    def test_a_remove_att_redirects(self):
+        self.assertEqual(" [Andalucía FQ enunciados](/home/recursos/recursos-para-oposiciones"
+                         "/2021-06-19-Andaluc%C3%ADa-FQ-enunciados.pdf) ",
+                         HTML2mdConverter.a("http://www.fiquipedia.es/home/recursos/recursos-para-oposiciones/2021-06"
+                                            "-19-Andaluc%C3%ADa-FQ-enunciados.pdf?attredirects=0", "Andalucía FQ enunciados"))
+
     def test_a_remove_html_extension(self):
         self.assertEqual(" [Evaluaciones](../evaluaciones-finales-bachillerato) ",
                          HTML2mdConverter.a("../evaluaciones-finales-bachillerato.html", "Evaluaciones"))
         self.assertEqual(" [PAU Fisica](/recursospau/pau-fisica) ",
                          HTML2mdConverter.a("https://www.fiquipedia.es/recursospau/pau-fisica.html", "PAU Fisica"))
 
-    def test_a_remove_html_extension(self):
+    def test_a_remove_html_extension_2(self):
         self.assertEqual(
             " [Dictamen 142016](http://www.educacionyfp.gob.es/dctm/cee/el-consejo/dictamenes/2016/dictamen142016.pdf) ",
             HTML2mdConverter.a("http://www.mecd.gob.es/dctm/cee/el-consejo/dictamenes/2016/dictamen142016.pdf",
@@ -39,7 +45,7 @@ class TestHTML2mdConverter(TestCase):
         url = "https://sites.google.com/site/fiquipediabackup05mar2018/home/recursos/ejercicios/ejercicios" \
               "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
         expected_url_link = "/home/recursos/ejercicios/ejercicios" \
-                            "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
+                            "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf"
         expected_url_text = "https://www.fiquipedia.es/home/recursos/ejercicios/ejercicios" \
                             "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
         self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url))
