@@ -123,7 +123,7 @@ class HTML2mdConverter:
         alt = HTML2mdConverter.get_attribute_by_name(attrs, "alt")
         link = HTML2mdConverter.get_attribute_by_name(attrs, "src")
 
-        return f'![{alt}]({link})\n'
+        return f'![{alt}]({link} "{alt}")\n'
 
     @staticmethod
     def strong(data: str) -> str:
