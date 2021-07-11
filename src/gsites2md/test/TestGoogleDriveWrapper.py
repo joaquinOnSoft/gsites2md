@@ -208,5 +208,5 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertTrue(os.path.exists("./GradoMedioxComunidades/CastillaLaMancha"))
         self.assertTrue(os.path.exists("./GradoMedioxComunidades/Madrid"))
 
-        TestGoogleDriveWrapper.remove_folder(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
+        TestGoogleDriveWrapper.remove_folder("./GradoMedioxComunidades")
 
