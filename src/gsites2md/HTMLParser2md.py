@@ -279,7 +279,9 @@ class HTMLParser2md(HTMLParser):
         img = HTML2mdConverter.img(attrs)
 
         if self.href:
-            self.a_data = img
+            if self.a_data is None:
+                self.a_data = ""
+            self.a_data += img
             img = ""
 
         return img

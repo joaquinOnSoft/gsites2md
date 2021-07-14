@@ -20,9 +20,9 @@ class TestGoogleDriveWrapper(unittest.TestCase):
     GOOGLE_DRIVE_FILE_URL = "https://drive.google.com/file/d/1moXo98Pp6X1hpSUbeql9TMlRO8GIyDBY/view?usp=sharing"
     FILE_ID_NOT_EXISTS = "0B-t5SY0w2A9aa9AaAAa9Aa99Aa9"
 
-    GOOGLE_DRIVE_FOLDER_URL = "https://drive.google.com/open?id=0B-t5SY0w2S8icVFyLURtUVNQQVU&authuser=0"
-    FOLDER_ID = "0B-t5SY0w2S8icVFyLURtUVNQQVU"
-    FOLDER_NAME = "fisica"
+    GOOGLE_DRIVE_FOLDER_URL = "https://drive.google.com/open?id=0B-t5SY0w2S8iRXNJU1RPTmZpaEE&authuser=0"
+    FOLDER_ID = "0B-t5SY0w2S8iRXNJU1RPTmZpaEE"
+    FOLDER_NAME = "media"
 
     GOOGLE_DRIVE_FOLDER_URL_WITHOUT_EXTRA_PARAMS = "https://drive.google.com/open?id=0B-t5SY0w2S8iXzI1VHE1TUxSRUk"
     FOLDER_WITHOUT_EXTRA_PARAMS_ID = "0B-t5SY0w2S8iXzI1VHE1TUxSRUk"
