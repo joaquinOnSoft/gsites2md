@@ -46,8 +46,7 @@ class TestHTML2mdConverter(TestCase):
               "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
         expected_url_link = "/home/recursos/ejercicios/ejercicios" \
                             "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf"
-        expected_url_text = "https://www.fiquipedia.es/home/recursos/ejercicios/ejercicios" \
-                            "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf?attredirects=0"
+        expected_url_text = "ProblemaGravitacion2.pdf"
         self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url))
 
     def test_a_with_white_spaces(self):
@@ -55,9 +54,14 @@ class TestHTML2mdConverter(TestCase):
         #   https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf
         # </a>
         url = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
-        expected_url_text = "https://www.serina.es/empresas/cede_muestra/106/TEMA MUESTRA.pdf"
+        expected_url_text = "TEMA MUESTRA.pdf"
         expected_url_link = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
         self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url))
+
+    def test__a_youtube(self):
+        self.assertEqual(" [![Joaquín Sabina La del Pirata Cojo](https://img.youtube.com/vi/MJF0dbZCVgQ/0.jpg)]"
+                         "(https://www.youtube.com/watch?v=MJF0dbZCVgQ) ",
+                         HTML2mdConverter.a_youtube("MJF0dbZCVgQ", "Joaquín Sabina La del Pirata Cojo"))
 
     def test_blockquote(self):
         quote = "This is the AK-47 assault rifle, \nthe preferred weapon of your enemy;"

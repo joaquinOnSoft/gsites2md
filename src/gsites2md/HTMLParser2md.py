@@ -155,6 +155,8 @@ class HTMLParser2md(HTMLParser):
     def manage_google_drive_url(self, url, download_path):
         new_url = url
 
+        logging.debug(f"Managing Google Drive URL: {url}")
+
         if self.google_drive_content_download:
             g_drive_file_downloaded = self.g_drive.download_content_from_url(url, download_path)
             logging.debug(f"New local path: {g_drive_file_downloaded}")

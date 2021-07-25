@@ -27,3 +27,14 @@ class TestURLUtils(TestCase):
 
         path = self.base_path + "test"
         self.assertTrue(URLUtils.is_friendly_url(path))
+
+    def test_is_youtube_video_url(self):
+        self.assertTrue(URLUtils.is_youtube_video_url("https://www.youtube.com/watch?v=MJF0dbZCVgQ"))
+        self.assertTrue(URLUtils.is_youtube_video_url("https://youtu.be/MJF0dbZCVgQ"))
+
+    def test_is_not_a_youtube_video_url(self):
+        self.assertFalse(URLUtils.is_youtube_video_url("https://fiquipedia.es"))
+        self.assertFalse(URLUtils.is_youtube_video_url("http://www.cece.gva.es/univ/es/PAU_informacion_general.htm"))
+
+    def test_is_youtube_video_url(self):
+        self.assertEqual("MJF0dbZCVgQ", URLUtils.get_youtube_video_id("https://www.youtube.com/watch?v=MJF0dbZCVgQ"))

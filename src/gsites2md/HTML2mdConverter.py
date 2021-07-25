@@ -1,5 +1,9 @@
+import logging
 import re
 from urllib.parse import unquote
+
+from gsites2md.HTMLExtractor import HTMLExtractor
+from gsites2md.URLUtils import URLUtils
 
 
 class HTML2mdConverter:
@@ -18,47 +22,44 @@ class HTML2mdConverter:
 
     @staticmethod
     def a(href: str, data: str) -> str:
-        if data:
-            data = re.sub(r'\s+', " ", data)
+        if data is not None:
+            if data == href:
+                # Replace link description with the page title instead
+                # of using the URL as description
+                logging.debug(f"Replace link description with the page title {href}")
+                extractor = HTMLExtractor(href)
+                title = extractor.get_title()
+                if title is not None:
+                    data = title
+            else:
+                data = re.sub(r'\s+', " ", data)
 
-            # Replace Google Sites backup site URL for main site URLs
-            data = data.replace("http://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es") \
-                .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es")
+                # Replace Google Sites backup site URL for main site URLs
+                data = HTML2mdConverter.__replace_fiquipedia_backup_site(data)
+                # Replace MEC urls for the new one
+                data = HTML2mdConverter.__replace_mec_url_by_educacionyfp(data)
 
-            if data.startswith("http://www.mecd.gob.es"):
-                data = data.replace("http://www.mecd.gob.es", "http://www.educacionyfp.gob.es")
-
-            # Url decode UTF-8 in Python
-            # https://stackoverflow.com/questions/16566069/url-decode-utf-8-in-python
-            data = unquote(data)
+                # Url decode UTF-8 in Python
+                # https://stackoverflow.com/questions/16566069/url-decode-utf-8-in-python
+                data = unquote(data)
         else:
             data = ""
 
+        if URLUtils.is_youtube_video_url(href):
+            return HTML2mdConverter.a_youtube(URLUtils.get_youtube_video_id(href), data)
+
         if href:
             # Replace absolute URL with local paths
-            href = href.replace("http://fiquipedia.es", "") \
-                .replace("http://www.fiquipedia.es", "") \
-                .replace("https://fiquipedia.es", "") \
-                .replace("https://www.fiquipedia.es", "") \
-                .replace("http://sites.google.com/site/fiquipediabackup05mar2018", "") \
-                .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "") \
-                .replace("http://a0286e09-a-62cb3a1a-s-sites.googlegroups.com/site/fiquipediabackup05mar2018", "")
+            href = HTML2mdConverter.__replace_fiquipedia_url_with_local_path(href)
 
             # Can all the '?attredirects=0' be automatically removed from URLs?
-            index_att_redirects = href.find("?attredirects=0")
-            if index_att_redirects != -1:
-                href = href[0:index_att_redirects]
+            href = HTML2mdConverter.__remove_attredirects_param_from_url(href)
 
             # Replace MEC urls for the new one
-            if href.startswith("http://www.mecd.gob.es"):
-                href = href.replace("http://www.mecd.gob.es", "http://www.educacionyfp.gob.es")
+            href = HTML2mdConverter.__replace_mec_url_by_educacionyfp(href)
 
             # Remove ".html" extension from fiquipedia URL
-            if (href.startswith("http://www.fiquipedia.es") or
-                href.startswith("https://www.fiquipedia.es") or
-                href.startswith("..") or href.startswith("/")) and \
-                    (href.endswith(".html") or href.endswith(".html")):
-                href = href.replace(".html", "").replace(".htm", "")
+            href = HTML2mdConverter.__remove_html_extension_from_fiquipedia_url(href)
 
         if href == "":
             href = "/"
@@ -220,3 +221,99 @@ class HTML2mdConverter:
                     ignore = True
 
         return ignore
+
+    @staticmethod
+    def __replace_fiquipedia_url_with_local_path(url: str) -> str:
+        """
+        Replace absolute fiquipedia URL with local paths
+        :param url: url to be evaluated
+        :return: local path if is a fiquipedia URL, the original URL in other case
+        """
+        path = url
+
+        if url is not None:
+            path = url.replace("http://fiquipedia.es", "") \
+                .replace("http://www.fiquipedia.es", "") \
+                .replace("https://fiquipedia.es", "") \
+                .replace("https://www.fiquipedia.es", "") \
+                .replace("http://sites.google.com/site/fiquipediabackup05mar2018", "") \
+                .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "") \
+                .replace("http://a0286e09-a-62cb3a1a-s-sites.googlegroups.com/site/fiquipediabackup05mar2018", "")
+
+        return path
+
+    @staticmethod
+    def __remove_attredirects_param_from_url(url: str) -> str:
+        """
+        Remove all the '?attredirects=0' parameters from Google Drive URLs
+        :param url: url to be evaluated
+        :return: Google Drive without the '?attredirects=0' parameter, the original URL in other case
+
+        """
+        new_url = url
+
+        if url is not None:
+            # Can all the '?attredirects=0' be automatically removed from URLs?
+            index_att_redirects = url.find("?attredirects=0")
+            if index_att_redirects != -1:
+                new_url = url[0:index_att_redirects]
+
+        return new_url
+
+    @staticmethod
+    def __remove_html_extension_from_fiquipedia_url(url: str) -> str:
+        new_url = url
+
+        if url is not None:
+            # Remove ".html" extension from fiquipedia URL
+            if (url.startswith("http://www.fiquipedia.es") or
+                url.startswith("https://www.fiquipedia.es") or
+                url.startswith("..") or url.startswith("/")) and \
+                    (url.endswith(".html") or url.endswith(".html")):
+                new_url = url.replace(".html", "").replace(".htm", "")
+
+        return new_url
+
+    @staticmethod
+    def __replace_mec_url_by_educacionyfp(url: str) -> str:
+        """
+        Replace MEC urls for the new one
+        :param url:
+        :return:
+        """
+        new_url = url
+
+        if url is not None:
+            if url.startswith("http://www.mecd.gob.es"):
+                new_url = url.replace("http://www.mecd.gob.es", "http://www.educacionyfp.gob.es")
+
+        return new_url
+
+    @staticmethod
+    def __replace_fiquipedia_backup_site(url: str) -> str:
+        """
+        Replace Google Sites backup site URL for main site URLs
+        :param url:
+        :return:
+        """
+        new_url = url
+
+        if url is not None:
+            new_url = url.replace("http://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es") \
+                .replace("https://sites.google.com/site/fiquipediabackup05mar2018", "https://www.fiquipedia.es")
+
+        return new_url
+
+    @staticmethod
+    def a_youtube(video_id: str, title: str) -> str:
+        """
+        Generate a link to a YouTube video in markdown using a preview image:
+            [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)]
+            (https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+        :param video_id: Video identifier
+        :param title: Video's title
+        :return:
+        SEE: https://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api?rq=1
+        SEE: https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages
+        """
+        return f" [![{title}](https://img.youtube.com/vi/{video_id}/0.jpg)](https://www.youtube.com/watch?v={video_id}) "
