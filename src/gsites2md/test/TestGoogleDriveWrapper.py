@@ -71,23 +71,23 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         self.assertIsNotNone(file_name)
         self.assertEqual(self.FILE_NAME, file_name)
 
-    def test_get_content_metadata_by_name(self):
-        file_name = self.wrapper.get_content_metadata_by_name(self.FILE_ID, GoogleDriveWrapper.METADATA_FIELD_NAME)
-        self.assertIsNotNone(file_name)
-        self.assertEqual(self.FILE_NAME, file_name)
+    # def test_get_content_metadata_by_name(self):
+    #     file_name = self.wrapper.get_content_metadata_by_name(self.FILE_ID, GoogleDriveWrapper.METADATA_FIELD_NAME)
+    #     self.assertIsNotNone(file_name)
+    #     self.assertEqual(self.FILE_NAME, file_name)
+    #
+    #     mimetype = self.wrapper.get_content_metadata_by_name(self.FILE_ID, GoogleDriveWrapper.METADATA_FIELD_MIMETYPE)
+    #     self.assertIsNotNone(mimetype)
+    #     self.assertEqual('application/pdf', mimetype)
+    #
+    #     parents = self.wrapper.get_content_metadata_by_name(self.FILE_UNDER_FOLDER_HIERARCHY_ID,
+    #                                                         GoogleDriveWrapper.METADATA_FIELD_PARENTS)
+    #     self.assertIsNotNone(parents)
+    #     self.assertEqual(['1qK_9zEcFePjcGDkX2VayPkQ2XNBTLBoD'], parents)
 
-        mimetype = self.wrapper.get_content_metadata_by_name(self.FILE_ID, GoogleDriveWrapper.METADATA_FIELD_MIMETYPE)
-        self.assertIsNotNone(mimetype)
-        self.assertEqual('application/pdf', mimetype)
-
-        parents = self.wrapper.get_content_metadata_by_name(self.FILE_UNDER_FOLDER_HIERARCHY_ID,
-                                                            GoogleDriveWrapper.METADATA_FIELD_PARENTS)
-        self.assertIsNotNone(parents)
-        self.assertEqual(['1qK_9zEcFePjcGDkX2VayPkQ2XNBTLBoD'], parents)
-
-    def test_get_content_path(self):
-        path = self.wrapper.get_content_path(self.FILE_UNDER_FOLDER_HIERARCHY_ID)
-        self.assertEqual("OposicionesFQ/Canarias/", path)
+    # def test_get_content_path(self):
+    #     path = self.wrapper.get_content_path(self.FILE_UNDER_FOLDER_HIERARCHY_ID)
+    #     self.assertEqual("OposicionesFQ/Canarias/", path)
 
     def test_get_folder_name(self):
         folder_name = self.wrapper.get_content_name(self.FOLDER_ID)
@@ -139,49 +139,49 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         file_path = self.wrapper.download_content_from_url(self.URL, "./")
         self.__check_file_download(file_path)
 
-    def test_download_folder_from_id(self):
-        path = self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_UNED_ID, ".")
+    # def test_download_folder_from_id(self):
+    #     path = self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_UNED_ID, ".")
+    #
+    #     self.assertEqual("./PAUxComunidades/electrotecnia/uned", path)
+    #     self.assertTrue(os.path.exists("./PAUxComunidades/electrotecnia/uned"))
+    #     self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2008-06-uned-electrotecnia-exam.pdf"))
+    #     self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2012-mo-uned-electrotecnia-exam.pdf"))
+    #     self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2014-06-09-uned-electrotecnia-exam.pdf"))
+    #     self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2014-mo-uned-electrotecnia-guia.pdf"))
+    #     self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2015-06-uned-electrotecnia-exam.pdf"))
+    #
+    #     TestGoogleDriveWrapper.remove_folder("./PAUxComunidades")
 
-        self.assertEqual("./PAUxComunidades/electrotecnia/uned", path)
-        self.assertTrue(os.path.exists("./PAUxComunidades/electrotecnia/uned"))
-        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2008-06-uned-electrotecnia-exam.pdf"))
-        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2012-mo-uned-electrotecnia-exam.pdf"))
-        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2014-06-09-uned-electrotecnia-exam.pdf"))
-        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2014-mo-uned-electrotecnia-guia.pdf"))
-        self.assertTrue(os.path.isfile("./PAUxComunidades/electrotecnia/uned/2015-06-uned-electrotecnia-exam.pdf"))
-
-        TestGoogleDriveWrapper.remove_folder("./PAUxComunidades")
-
-    def test_download_folder_with_subfolders_from_id(self):
-        path = self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_ID, ".")
-
-        self.assertIsNotNone(path)
-        self.assertEqual("./GradoMedioxComunidades", path)
-        self.assertTrue(os.path.exists("./GradoMedioxComunidades"))
-
-        self.assertTrue(os.path.exists("./GradoMedioxComunidades/CastillaLaMancha"))
-        self.assertTrue(
-            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2010-CastillaLaMancha-modelo-GM-CT.pdf"))
-        self.assertTrue(
-            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2012-CastillaLaMancha-06-GM-CT.pdf"))
-        self.assertTrue(
-            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2012-CastillaLaMancha-09-GM-CT.pdf"))
-        self.assertTrue(
-            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2013-CastillaLaMancha-06-GM-CT.pdf"))
-        self.assertTrue(
-            os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2013-CastillaLaMancha-09-GM-CT.pdf"))
-
-        self.assertTrue(os.path.exists("./GradoMedioxComunidades/Madrid"))
-        self.assertTrue(
-            os.path.isfile("./GradoMedioxComunidades/Madrid/2004-madrid-GM-CT-exam.doc"))
-        self.assertTrue(
-            os.path.isfile("./GradoMedioxComunidades/Madrid/2004-madrid-GM-CT-soluc.doc"))
-        self.assertTrue(
-            os.path.isfile("./GradoMedioxComunidades/Madrid/2005-madrid-GM-CT-exam.doc"))
-        self.assertTrue(
-            os.path.isfile("./GradoMedioxComunidades/Madrid/2005-madrid-GM-CT-soluc.doc"))
-
-        TestGoogleDriveWrapper.remove_folder(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
+    # def test_download_folder_with_subfolders_from_id(self):
+    #     path = self.wrapper.download_folder_from_id(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_ID, ".")
+    #
+    #     self.assertIsNotNone(path)
+    #     self.assertEqual("./GradoMedioxComunidades", path)
+    #     self.assertTrue(os.path.exists("./GradoMedioxComunidades"))
+    #
+    #     self.assertTrue(os.path.exists("./GradoMedioxComunidades/CastillaLaMancha"))
+    #     self.assertTrue(
+    #         os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2010-CastillaLaMancha-modelo-GM-CT.pdf"))
+    #     self.assertTrue(
+    #         os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2012-CastillaLaMancha-06-GM-CT.pdf"))
+    #     self.assertTrue(
+    #         os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2012-CastillaLaMancha-09-GM-CT.pdf"))
+    #     self.assertTrue(
+    #         os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2013-CastillaLaMancha-06-GM-CT.pdf"))
+    #     self.assertTrue(
+    #         os.path.isfile("./GradoMedioxComunidades/CastillaLaMancha/2013-CastillaLaMancha-09-GM-CT.pdf"))
+    #
+    #     self.assertTrue(os.path.exists("./GradoMedioxComunidades/Madrid"))
+    #     self.assertTrue(
+    #         os.path.isfile("./GradoMedioxComunidades/Madrid/2004-madrid-GM-CT-exam.doc"))
+    #     self.assertTrue(
+    #         os.path.isfile("./GradoMedioxComunidades/Madrid/2004-madrid-GM-CT-soluc.doc"))
+    #     self.assertTrue(
+    #         os.path.isfile("./GradoMedioxComunidades/Madrid/2005-madrid-GM-CT-exam.doc"))
+    #     self.assertTrue(
+    #         os.path.isfile("./GradoMedioxComunidades/Madrid/2005-madrid-GM-CT-soluc.doc"))
+    #
+    #     TestGoogleDriveWrapper.remove_folder(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_NAME)
 
     def test_replicate_file_path_from_id(self):
         file_path = self.wrapper.replicate_file_path_from_id(self.FILE_ID, "./", self.FILE_NAME)
@@ -191,22 +191,22 @@ class TestGoogleDriveWrapper(unittest.TestCase):
         # Cleanup. Remove folder structure created during the test
         TestGoogleDriveWrapper.remove_folder("./TV detect ads")
 
-    def test_replicate_folder__from_id(self):
-        path = self.wrapper.replicate_folder_path_from_id(TestGoogleDriveWrapper.FOLDER_UNED_ID, ".")
+    # def test_replicate_folder__from_id(self):
+    #     path = self.wrapper.replicate_folder_path_from_id(TestGoogleDriveWrapper.FOLDER_UNED_ID, ".")
+    #
+    #     self.assertEqual("./PAUxComunidades/electrotecnia/uned", path)
+    #     self.assertTrue(os.path.exists("./PAUxComunidades/electrotecnia/uned"))
+    #
+    #     TestGoogleDriveWrapper.remove_folder("./PAUxComunidades")
 
-        self.assertEqual("./PAUxComunidades/electrotecnia/uned", path)
-        self.assertTrue(os.path.exists("./PAUxComunidades/electrotecnia/uned"))
-
-        TestGoogleDriveWrapper.remove_folder("./PAUxComunidades")
-
-    def test_replicate_folder_with_subfolders_path_from_id(self):
-        path = self.wrapper.replicate_folder_path_from_id(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_ID, ".")
-
-        self.assertIsNotNone(path)
-        self.assertEqual("./GradoMedioxComunidades", path)
-        self.assertTrue(os.path.exists("./GradoMedioxComunidades"))
-        # self.assertTrue(os.path.exists("./GradoMedioxComunidades/CastillaLaMancha"))
-        self.assertTrue(os.path.exists("./GradoMedioxComunidades/Madrid"))
-
-        TestGoogleDriveWrapper.remove_folder("./GradoMedioxComunidades")
+    # def test_replicate_folder_with_subfolders_path_from_id(self):
+    #     path = self.wrapper.replicate_folder_path_from_id(TestGoogleDriveWrapper.FOLDER_WITH_SUBFOLDERS_ID, ".")
+    #
+    #     self.assertIsNotNone(path)
+    #     self.assertEqual("./GradoMedioxComunidades", path)
+    #     self.assertTrue(os.path.exists("./GradoMedioxComunidades"))
+    #     self.assertTrue(os.path.exists("./GradoMedioxComunidades/CastillaLaMancha"))
+    #     self.assertTrue(os.path.exists("./GradoMedioxComunidades/Madrid"))
+    #
+    #     TestGoogleDriveWrapper.remove_folder("./GradoMedioxComunidades")
 

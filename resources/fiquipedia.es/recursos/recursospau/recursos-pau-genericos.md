@@ -31,7 +31,7 @@ Selectividad. Universidad Carlos III de Madrid. Incluye modelos de examen y rela
  [g_b_examenes_anteriores.php](http://www.juntadeandalucia.es/innovacioncienciayempresa/sguit/g_b_examenes_anteriores.php) Exámenes distrito único andaluz desde 2004Selectividad física 2006, 2007, 2008, 2009, 2010, 2011 y 2012 Andalucía resueltos [index.php](http://www.fiquimakcc.es/index.php?option=com_content&view=article&id=91:fissel2008&catid=88&Itemid=481) Kico Calvillo, Licenciado en FísicaPara Ceuta y Melilla parece que la PAU se hace en Andalucía: en junio 2014 se indica en [Inscripción Pruebas de Acceso a la Universidad | Servicio de Acceso, Admisión y Permanencia](http://serviciodealumnos.ugr.es/pages/pruebas_acceso/selectividad/alumnos/fechas_inscripcion) donde se cita " Aquí puedes encontrar una presentación que te ayudará a realizar el registro: Alumnos que este curso aprobarán el 2º de Bachillerato o el 2º curso del CFGS en un centro de Granada, Ceuta, Melilla o centros adscritos a la Universidad de Granada en Marruecos..."
 
 ##  [](/) Aragón
- [exame.html](http://wzar.unizar.es/servicios/acceso/accespau/exame/exame.html) Exámenes desde 2006
+ [Error 404 :: Universidad de Zaragoza](http://wzar.unizar.es/servicios/acceso/accespau/exame/exame.html) Exámenes desde 2006
 
 ##  [](/) Asturias
  [Universidad de Oviedo - Exámenes PAU / EBAU](http://www.uniovi.es/accesoyayudas/estudios/pau/examenes) Exámenes desde 1998
