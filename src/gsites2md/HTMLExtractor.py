@@ -32,13 +32,13 @@ class HTMLExtractor:
     def get_title(self):
         title = None
         if self.html:
-            title_elements = re.findall(r"<title>(.*)<\/title>", self.html)
-            if title_elements is not None and len(title_elements) > 0:
-                title = title_elements[0]
+            title_elements = re.findall(r"<(title|TITLE)>(.*)<\/(title|TITLE)>", self.html)
+            if title_elements is not None and len(title_elements) > 0 and len(title_elements[0]) > 2:
+                title = title_elements[0][1]
             else:
-                h1_elements = re.findall(r"<h1(.*)>(.*)<\/h1>", self.html)
-                if h1_elements is not None and len(h1_elements) > 0:
-                    title = h1_elements[0][1]
+                h1_elements = re.findall(r"<(h1|H1)(.*)>(.*)<\/(h1|H1)>", self.html)
+                if h1_elements is not None and len(h1_elements) > 0 and len(h1_elements[0]) > 3:
+                    title = h1_elements[0][2]
         else:
             index_last_separator = self.url.rfind("/")
             index_question_mark = self.url.rfind("?")
