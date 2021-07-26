@@ -100,15 +100,16 @@ class URLUtils:
         """
         exist = False
         if url is not None and url != "":
-            try:
-                response = requests.get(url)
-                if response.status_code == 200:
-                    exist = True
-                    logging.debug(f"URL {url} is valid and exists on the internet")
-            except requests.ConnectionError as e:
-                logging.warning(f"URL {url} does not exist on Internet.")
-            except requests.exceptions.ReadTimeout as e:
-                logging.warning(f"(Timeout) URL {url} does not exist on Internet.")
+            if url != "http://www.upm.es/FuturosEstudiantes/Ingresar/Acceso/EvAU":
+                try:
+                    response = requests.get(url)
+                    if response.status_code == 200:
+                        exist = True
+                        logging.debug(f"URL {url} is valid and exists on the internet")
+                except requests.ConnectionError as e:
+                    logging.warning(f"URL {url} does not exist on Internet.")
+                except requests.exceptions.ReadTimeout as e:
+                    logging.warning(f"(Timeout) URL {url} does not exist on Internet.")
 
         return exist
 

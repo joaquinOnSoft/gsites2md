@@ -23,7 +23,7 @@ class HTMLExtractor:
                 h1_elements = re.findall(r"<(h1|H1)(.*)>(.*)<\/(h1|H1)>", self.html)
                 if h1_elements is not None and len(h1_elements) > 0 and len(h1_elements[0]) > 3:
                     title = h1_elements[0][2]
-                    
+
         if title is None and not URLUtils.is_twitter_status_url(self.url):
             index_last_separator = self.url.rfind("/")
             index_question_mark = self.url.rfind("?")

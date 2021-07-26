@@ -181,7 +181,9 @@ class HTMLParser2md(HTMLParser):
             return
 
         if tag == self.HTML_TAG_A:
-            self._md += HTML2mdConverter.a(self.href, self.a_data)
+            # ignore <a> tags used as anchors (it doesn't include a href attribute)
+            if self.href is not None and self.href != "":
+                self._md += HTML2mdConverter.a(self.href, self.a_data)
             self.href = None
             self.a_data = None
         elif tag == self.HTML_TAG_H1 or tag == self.HTML_TAG_H2 or \

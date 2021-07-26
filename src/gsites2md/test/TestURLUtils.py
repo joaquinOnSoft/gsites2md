@@ -43,6 +43,9 @@ class TestURLUtils(TestCase):
     def test_is_youtube_video_url(self):
         self.assertEqual("MJF0dbZCVgQ", URLUtils.get_youtube_video_id("https://www.youtube.com/watch?v=MJF0dbZCVgQ"))
 
+    def test_check_url_never_ends(self):
+        self.assertFalse(URLUtils.check_url_exists("http://www.upm.es/FuturosEstudiantes/Ingresar/Acceso/EvAU"))
+
     def test_check_url_exists(self):
         self.assertTrue(URLUtils.check_url_exists("https://twitter.com/CIAandPatri/status/1035502202809450496"))
         self.assertFalse(URLUtils.check_url_exists("http://www.selectividad.profesores.net/"))
