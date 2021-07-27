@@ -7,7 +7,18 @@ class TestHTMLParser2md(TestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.parser = HTMLParser2md()
+
+        options = {
+            # (flag) Replace Google Drive links to local links
+            "replace_google_drive_links": False,
+            # (flag) Download Google Drive content to local drive.
+            "google_drive_content_download": False,
+            # Path to download Google drive content
+            "downloads": ".",
+            # Timeout, in seconds, to use in link validation connections.
+            "timeout": "-1"
+        }
+        self.parser = HTMLParser2md(options)
 
     def test_li(self):
         self.parser.nested_list.append("ul")

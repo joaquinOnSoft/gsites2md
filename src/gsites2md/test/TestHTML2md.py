@@ -70,7 +70,19 @@ class TestHTML2md(TestCase):
         output_file_name = self.base_path + output_file_name
 
         generated_output_file_name = input_file_name + ".md"
-        HTML2md.process(input_file_name, generated_output_file_name)
+
+        options = {"source": input_file_name,
+                   "destination": generated_output_file_name,
+                   # (flag) Replace Google Drive links to local links
+                   "replace_google_drive_links": False,
+                   # (flag) Download Google Drive content to local drive.
+                   "google_drive_content_download": False,
+                   # Path to download Google drive content
+                   "downloads": ".",
+                   # Timeout, in seconds, to use in link validation connections.
+                   "timeout": "-1"
+                   }
+        HTML2md.process(options)
 
         expected_output = TestHTML2md.read_file(output_file_name)
         generated_output = TestHTML2md.read_file(generated_output_file_name)

@@ -9,76 +9,82 @@ from gsites2md.HTMLParser2md import HTMLParser2md
 class HTML2md:
 
     @staticmethod
-    def process(input_name: str, output_name: str, replace_google_drive_links: bool = False, downloads: str = '.',
-                google_drive_content_download: bool = False):
+    def process(options: dict):
         """
         Convert and HTML file or folder (with all their nested files) in a Markdown file.
-        :param input_name: Input file/folder name
-        :param output_name: Output file/folder name.
-        :param replace_google_drive_links: Flag: Replace Google Drive links to local links
-        (It'll download the content)')
-        :param downloads: Path used as base path to download Google Drive content
-        :param google_drive_content_download: Download Google Drive content to local drive
+        :param options: dictionary that contains the following keys:
+            "source":  source file or folder
+            "destination": destination file or folder
+            "replace_google_drive_links": (flag) Replace Google Drive links to local links)
+            "google_drive_content_download": (flag) Download Google Drive content to local drive.
+            "downloads": Path to download Google drive content. Default value, "."
+            "timeout": Timeout, in seconds, to use in link validation connections. Default value "-1" (unlimited)
         """
-        if os.path.isfile(input_name):
-            HTML2md.__process_file(input_name, output_name, replace_google_drive_links, downloads, google_drive_content_download)
+        if os.path.isfile(options["source"]):
+            HTML2md.__process_file(options)
         else:
-            HTML2md.__process_folder(input_name, output_name, replace_google_drive_links, downloads, google_drive_content_download)
+            HTML2md.__process_folder(options)
 
     @staticmethod
-    def __process_folder(input_folder_name: str, output_folder_name,
-                         replace_google_drive_links=False, downloads: str = '.',
-                         google_drive_content_download: bool = False):
+    def __process_folder(options):
 
-        for dir_path, dirs, files in os.walk(input_folder_name):
+        for dir_path, dirs, files in os.walk(options["source"]):
 
             for d in dirs:
-                d_in_name = os.path.join(input_folder_name, os.path.join(dir_path, d))
-                d_out_name = d_in_name.replace(input_folder_name, output_folder_name)
+                d_in_name = os.path.join(options["source"], os.path.join(dir_path, d))
+                d_out_name = d_in_name.replace(options["source"], options["destination"])
                 if not os.path.exists(d_out_name):
                     logging.debug("Creating folder: " + d_out_name)
                     os.mkdir(d_out_name)
 
             for filename in files:
                 f_in_name = os.path.join(dir_path, filename)
-                f_out_name = f_in_name.replace(input_folder_name, output_folder_name)
+                f_out_name = f_in_name.replace(options["source"], options["destination"])
 
                 if URLUtils.is_friendly_url(f_in_name):
                     f_out_name = f_out_name + ".md"
                     logging.debug("HTML2MD: " + f_in_name)
-                    HTML2md.__process_file(f_in_name, f_out_name, replace_google_drive_links, downloads,
-                                           google_drive_content_download)
+
+                    options["source"] = f_in_name
+                    options["destination"] = f_out_name
+                    HTML2md.__process_file(options)
                 elif URLUtils.is_html(f_in_name):
                     f_out_name = f_out_name.replace(".html", ".md").replace(".htm", ".md")
                     logging.debug("HTML2MD: " + f_in_name)
-                    HTML2md.__process_file(f_in_name, f_out_name, replace_google_drive_links, downloads,
-                                           google_drive_content_download)
+
+                    options["source"] = f_in_name
+                    options["destination"] = f_out_name
+                    HTML2md.__process_file(options)
                 else:
                     logging.debug("Copying: " + f_in_name)
                     shutil.copy2(f_in_name, f_out_name)
 
     @staticmethod
-    def __process_file(input_name: str, output_name: str, replace_google_drive_links: bool = False,
-                       downloads: str = '.', google_drive_content_download: bool = False):
+    def __process_file(options: dict):
         """
         Convert and HTML file in a Markdown file.
-        :param input_name: Input file name
-        :param output_name: Output file name. If is not provided the output file will have
-        the same name of the input file, changing the extension .html/.htm to .md
+        :param options: dictionary that contains the following keys:
+            "source":  source file or folder
+            "destination": destination file or folder
+            "replace_google_drive_links": (flag) Replace Google Drive links to local links)
+            "google_drive_content_download": (flag) Download Google Drive content to local drive.
+            "downloads": Path to download Google drive content. Default value, "."
+            "timeout": Timeout, in seconds, to use in link validation connections. Default value "-1" (unlimited)
         """
-        f = open(input_name, "r")
+        f = open(options["source"], "r")
         html_txt = f.read()
         f.close()
 
-        parser = HTMLParser2md(replace_google_drive_links, downloads, google_drive_content_download)
+        # Parse html file
+        parser = HTMLParser2md(options)
         parser.feed(html_txt)
         md = parser.md
 
         md = HTML2md.__remove_useless_md(md)
 
-        if output_name is None:
-            output_name = input_name.replace('.html', '.md').replace('.htm', '.md')
-        f = open(output_name, "w")
+        if "destination" not in options:
+            options["destination"] = options["source"].replace('.html', '.md').replace('.htm', '.md')
+        f = open(options["destination"], "w")
         f.write(md)
         f.close()
 

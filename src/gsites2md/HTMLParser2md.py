@@ -45,15 +45,19 @@ class HTMLParser2md(HTMLParser):
     # Unordered list tag: <ul>
     HTML_TAG_UL = "ul"
 
-    def __init__(self, replace_google_drive_links: bool = False, downloads: str = '.',
-                 google_drive_content_download: bool = False):
+    def __init__(self, options: dict):
+        """
+         :param options: dictionary that contains the following keys:
+            "replace_google_drive_links": (flag) Replace Google Drive links to local links)
+            "google_drive_content_download": (flag) Download Google Drive content to local drive.
+            "downloads": Path to download Google drive content. Default value, "."
+            "timeout": Timeout, in seconds, to use in link validation connections. Default value "-1" (unlimited)
+        """
         super().__init__()
 
-        self.replace_google_drive_links = replace_google_drive_links
-        self.downloads = downloads
-        self.google_drive_content_download = google_drive_content_download
+        self.options = options
 
-        if replace_google_drive_links:
+        if options["replace_google_drive_links"]:
             self.g_drive = GoogleDriveWrapper()
 
         self.reset()
@@ -109,8 +113,8 @@ class HTMLParser2md(HTMLParser):
             self.a_data = ""
 
             # Manage Google Drive links. Download the file and replace the link for a a local reference
-            if self.replace_google_drive_links and self.g_drive.is_google_drive_url(self.href):
-                self.href = self.manage_google_drive_url(self.href, self.downloads)
+            if self.options["replace_google_drive_links"] and self.g_drive.is_google_drive_url(self.href):
+                self.href = self.manage_google_drive_url(self.href, self.options["downloads"])
 
             self.links.append(self.href)
         elif tag == self.HTML_TAG_BR:
@@ -157,7 +161,7 @@ class HTMLParser2md(HTMLParser):
 
         logging.debug(f"Managing Google Drive URL: {url}")
 
-        if self.google_drive_content_download:
+        if self.options["google_drive_content_download"]:
             g_drive_file_downloaded = self.g_drive.download_content_from_url(url, download_path)
             logging.debug(f"New local path: {g_drive_file_downloaded}")
 
