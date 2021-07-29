@@ -83,7 +83,7 @@ class HTML2md:
 
         md = HTML2md.__remove_useless_md(md)
 
-        if config.destination:
+        if config.destination is None:
             config.destination = config.source.replace('.html', '.md').replace('.htm', '.md')
         f = open(config.destination, "w")
         f.write(md)
