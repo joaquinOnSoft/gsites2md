@@ -1,6 +1,5 @@
 import logging
 import re
-import ntpath
 
 from html.parser import HTMLParser
 from gsites2md.HTML2mdConverter import HTML2mdConverter
@@ -45,9 +44,9 @@ class HTMLParser2md(HTMLParser):
     # Unordered list tag: <ul>
     HTML_TAG_UL = "ul"
 
-    def __init__(self, options: dict):
+    def __init__(self, config):
         """
-         :param options: dictionary that contains the following keys:
+         :param config: object that contains the following properties:
             "replace_google_drive_links": (flag) Replace Google Drive links to local links)
             "google_drive_content_download": (flag) Download Google Drive content to local drive.
             "downloads": Path to download Google drive content. Default value, "."
@@ -55,9 +54,9 @@ class HTMLParser2md(HTMLParser):
         """
         super().__init__()
 
-        self.options = options
+        self.config = config
 
-        if options["replace_google_drive_links"]:
+        if config.replace_google_drive_links:
             self.g_drive = GoogleDriveWrapper()
 
         self.reset()
@@ -113,8 +112,8 @@ class HTMLParser2md(HTMLParser):
             self.a_data = ""
 
             # Manage Google Drive links. Download the file and replace the link for a a local reference
-            if self.options["replace_google_drive_links"] and self.g_drive.is_google_drive_url(self.href):
-                self.href = self.manage_google_drive_url(self.href, self.options["downloads"])
+            if self.config.replace_google_drive_links and self.g_drive.is_google_drive_url(self.href):
+                self.href = self.manage_google_drive_url(self.href, self.config.downloads)
 
             self.links.append(self.href)
         elif tag == self.HTML_TAG_BR:
@@ -156,12 +155,12 @@ class HTMLParser2md(HTMLParser):
 
         self._md += html2md
 
-    def manage_google_drive_url(self, url, download_path):
+    def manage_google_drive_url(self, url, download_path) -> str:
         new_url = url
 
         logging.debug(f"Managing Google Drive URL: {url}")
 
-        if self.options["google_drive_content_download"]:
+        if self.config.google_drive_content_download:
             g_drive_file_downloaded = self.g_drive.download_content_from_url(url, download_path)
             logging.debug(f"New local path: {g_drive_file_downloaded}")
 

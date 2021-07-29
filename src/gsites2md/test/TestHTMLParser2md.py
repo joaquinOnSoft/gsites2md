@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from ..HTML2md import HTMLParser2md
+from ..HTML2mdConfig import HTML2mdConfig
 
 
 class TestHTMLParser2md(TestCase):
@@ -8,17 +9,8 @@ class TestHTMLParser2md(TestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        options = {
-            # (flag) Replace Google Drive links to local links
-            "replace_google_drive_links": False,
-            # (flag) Download Google Drive content to local drive.
-            "google_drive_content_download": False,
-            # Path to download Google drive content
-            "downloads": ".",
-            # Timeout, in seconds, to use in link validation connections.
-            "timeout": "-1"
-        }
-        self.parser = HTMLParser2md(options)
+        config = HTML2mdConfig()
+        self.parser = HTMLParser2md(config)
 
     def test_li(self):
         self.parser.nested_list.append("ul")
