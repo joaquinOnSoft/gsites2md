@@ -47,7 +47,7 @@ class TestHTML2mdConverter(TestCase):
         expected_url_link = "/home/recursos/ejercicios/ejercicios" \
                             "-elaboracion-propia-fisica-2-bachillerato/ProblemaGravitacion2.pdf"
         expected_url_text = "ProblemaGravitacion2.pdf"
-        self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url))
+        self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url, True, 5))
 
     def test_a_with_white_spaces(self):
         # <a href="https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf">
@@ -56,7 +56,7 @@ class TestHTML2mdConverter(TestCase):
         url = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
         expected_url_text = "TEMA MUESTRA.pdf"
         expected_url_link = "https://www.serina.es/empresas/cede_muestra/106/TEMA%20MUESTRA.pdf"
-        self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url))
+        self.assertEqual(f' [{expected_url_text}]({expected_url_link}) ', HTML2mdConverter.a(url, url, True, 2))
 
     def test__a_youtube(self):
         self.assertEqual(" [![Joaquín Sabina La del Pirata Cojo](https://img.youtube.com/vi/MJF0dbZCVgQ/0.jpg)]"

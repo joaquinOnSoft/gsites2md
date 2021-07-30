@@ -6,12 +6,17 @@ from gsites2md.URLUtils import URLUtils
 
 class HTMLExtractor:
 
-    def __init__(self, url):
+    def __init__(self, url, timeout=-1):
+        """
+        :param url: URL to be checked
+        :param timeout: Connection time out in seconds (admits decimals, e.g. 1 or 0.750).
+        Default value: -1 (No timeout)
+        """
         self.url = url
         self.html = None
 
-        if URLUtils.check_url_exists(url) and not URLUtils.is_twitter_status_url(url):
-            self.html = URLUtils.get_html_from_url(url)
+        if URLUtils.check_url_exists(url, timeout) and not URLUtils.is_twitter_status_url(url):
+            self.html = URLUtils.get_html_from_url(url, timeout)
 
     def get_title(self):
         title = None

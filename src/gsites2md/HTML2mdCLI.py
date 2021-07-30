@@ -26,8 +26,10 @@ def print_help():
     print('\t-D, --download : (Optional) Flag: Download Google Drive content to local drive.'
           'This option will have effect only if is used in conjunction with --replace, '
           'otherwise will be ignored')
+    print('\t-u, --url: (Optional) Use the page title, header of level 1 or the last section of the '
+          'URL as URL description (only when URL link a description are the same). NOTE: This option can be slow.')
     print('\t-t, --timeout <seconds>: (Optional) Timeout, in seconds, to use in link validation connections. '
-          'It admits miliseconds, e.g. "0.750". By default is unlimited')
+          'It admits miliseconds, e.g. "0.750" or seconds "2". By default is unlimited')
 
 
 def main(argv):
@@ -60,7 +62,14 @@ def main(argv):
             config.replace_google_drive_links = True
         elif opt in ("-D", "--download"):
             config.google_drive_content_download = True
-        # TODO recuperar timeout
+        elif opt in ("-u", "--url"):
+            config.url = True
+        elif opt in ("-t", "--timeout"):
+            if HTML2mdConfig.isfloat(arg):
+                config.timeout = arg
+            else:
+                print_help()
+                sys.exit(f"Invalid timeout value: {arg}")
 
     if config.source and config.destination:
         if os.path.isfile(config.source) or \

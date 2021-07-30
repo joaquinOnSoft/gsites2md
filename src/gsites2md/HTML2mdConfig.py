@@ -12,6 +12,8 @@ class HTML2mdConfig:
         self.downloads = "."
         # Timeout, in seconds, to use in link validation connections.
         self._timeout = "-1"
+        # Use the page title, header of level 1 or the last section of the URL as URL description.
+        self.url = False
 
     @property
     def timeout(self):

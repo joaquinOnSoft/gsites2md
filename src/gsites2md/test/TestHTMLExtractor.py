@@ -20,7 +20,7 @@ class TestHTMLExtractor(unittest.TestCase):
         self.assertEqual("Standing Waves on a String", extractor.get_title())
 
     def test_get_title_from_none_html(self):
-        extractor = HTMLExtractor("https://rseq.org/wp-content/uploads/2018/09/5-OtrosMateriales.pdf#page=2")
+        extractor = HTMLExtractor("https://rseq.org/wp-content/uploads/2018/09/5-OtrosMateriales.pdf#page=2", 5)
         self.assertEqual("5-OtrosMateriales.pdf#page=2", extractor.get_title())
 
     def test_get_title_from_none_html_with_params(self):
