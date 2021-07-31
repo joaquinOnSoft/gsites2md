@@ -45,7 +45,8 @@ def main(argv):
     logging.info('Started')
 
     try:
-        opts, args = getopt.getopt(argv, "hs:d:rDt:", ["help", "source=", "dest=", "replace", "download", "timeout"])
+        opts, args = getopt.getopt(argv, "hs:d:rDt:u",
+                                   ["help", "source=", "dest=", "replace", "download", "timeout=", "url"])
     except getopt.GetoptError:
         print_help()
         sys.exit(2)
