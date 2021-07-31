@@ -386,12 +386,14 @@ class GoogleDriveWrapper:
         :return: Local path of the downloaded file, None if the file doesn't exist
         (usually a 404 happens when you try to download the file)
         """
+        downloaded_file_path = None
         if replicate_google_drive_folder_structure:
             path = self.__replicate_google_drive_folder_structure(file_id, path)
 
         request = self.service.files().get_media(fileId=file_id, fields="files(id, name)")
 
-        downloaded_file_path = os.path.join(path, file_name)
+        if file_name is not None:
+            downloaded_file_path = os.path.join(path, file_name)
 
         return downloaded_file_path
 

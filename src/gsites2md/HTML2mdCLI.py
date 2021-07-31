@@ -29,7 +29,7 @@ def print_help():
     print('\t-u, --url: (Optional) Use the page title, header of level 1 or the last section of the '
           'URL as URL description (only when URL link a description are the same). NOTE: This option can be slow.')
     print('\t-t, --timeout <seconds>: (Optional) Timeout, in seconds, to use in link validation connections. '
-          'It admits miliseconds, e.g. "0.750" or seconds "2". By default is unlimited')
+          'It admits milliseconds, e.g. "0.750" or seconds "2". By default is unlimited')
 
 
 def main(argv):
@@ -73,12 +73,13 @@ def main(argv):
 
     if config.source and config.destination:
         if os.path.isfile(config.source) or \
-                (os.path.isdir(config.sourceconfig) and
+                (os.path.isdir(config.source) and
                  os.path.isdir(config.destination)):
 
             # Check if "downloads" folder exits under "destination" folder
             if os.path.isdir(config.destination):
                 downloads = os.path.join(config.destination, "drive")
+                config.downloads = downloads
                 if os.path.isdir(downloads) is False:
                     os.mkdir(downloads)
 

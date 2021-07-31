@@ -1,3 +1,4 @@
+import copy
 import logging
 import os
 import shutil
@@ -46,19 +47,24 @@ class HTML2md:
                     f_out_name = f_out_name + ".md"
                     logging.debug("HTML2MD: " + f_in_name)
 
-                    config.source = f_in_name
-                    config.destination = f_out_name
-                    HTML2md.__process_file(config)
+                    config4files = HTML2md.update_cloned_config(f_in_name, f_out_name, config)
+                    HTML2md.__process_file(config4files)
                 elif URLUtils.is_html(f_in_name):
                     f_out_name = f_out_name.replace(".html", ".md").replace(".htm", ".md")
                     logging.debug("HTML2MD: " + f_in_name)
 
-                    config.source = f_in_name
-                    config.destination = f_out_name
-                    HTML2md.__process_file(config)
+                    config4files = HTML2md.update_cloned_config(f_in_name, f_out_name, config)
+                    HTML2md.__process_file(config4files)
                 else:
                     logging.debug("Copying: " + f_in_name)
                     shutil.copy2(f_in_name, f_out_name)
+
+    @staticmethod
+    def update_cloned_config(f_in_name, f_out_name, config):
+        config4files = copy.copy(config)
+        config4files.source = f_in_name
+        config4files.destination = f_out_name
+        return config4files
 
     @staticmethod
     def __process_file(config):
