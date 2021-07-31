@@ -23,6 +23,23 @@ If you have a Physics or Chemistry problem, if no one else can help,
 and if you can browse to [fiquipedia.es](http://fiquipedia.es) and you find the solution....maybe you can 
 [buy a coffe to fiquipedia.es](https://ko-fi.com/fiquipedia).
 
+## Running on the command line
+
+```
+Convert an HTML file or folder (and its content) in a Markdown file
+
+Execution:
+	python HTML2mdCLI.py -s <input_file_or_folder> -d <destination_path>
+	
+where:
+	-h, --help: Print this help
+	-s, --source <source_path>: (Mandatory) source file or folder
+	-d, --dest <dest_path>: (Mandatory) destination file or folder
+	-r, --replace : (Optional) Flag: Replace Google Drive links to local links (It WON'T download the content by default. You must use in conjunction with --download to force the download)
+	-D, --download : (Optional) Flag: Download Google Drive content to local drive.This option will have effect only if is used in conjunction with --replace, otherwise will be ignored
+	-u, --url: (Optional) Use the page title, header of level 1 or the last section of the URL as URL description (only when URL link a description are the same). NOTE: This option can be slow.
+	-t, --timeout <seconds>: (Optional) Timeout, in seconds, to use in link validation connections. It admits milliseconds, e.g. "0.750" or seconds "2". By default is unlimited
+```
 ## Setting up your development environment
 These are some recommended readings in order to set up a local environment using PyCharm;
    * [Create a Project from GitHub](https://www.jetbrains.com/pycharm/guide/tips/create-project-from-github/)
