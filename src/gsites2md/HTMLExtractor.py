@@ -1,3 +1,4 @@
+import logging
 import re
 from urllib.parse import unquote
 
@@ -15,19 +16,19 @@ class HTMLExtractor:
         self.url = url
         self.html = None
 
-        if URLUtils.check_url_exists(url, timeout) and not URLUtils.is_twitter_status_url(url):
+        if url is not None and not URLUtils.is_twitter_status_url(url):
             self.html = URLUtils.get_html_from_url(url, timeout)
 
     def get_title(self):
         title = None
         if self.html:
-            title_elements = re.findall(r"<(title|TITLE)>(.*)<\/(title|TITLE)>", self.html)
-            if title_elements is not None and len(title_elements) > 0 and len(title_elements[0]) > 2:
+            title_elements = re.findall(r"<(TITLE|title).*?>(.+?)<\/(TITLE|title)>", self.html)
+            if title_elements is not None and len(title_elements) > 0 and len(title_elements[0]) == 3:
                 title = title_elements[0][1]
             else:
-                h1_elements = re.findall(r"<(h1|H1)(.*)>(.*)<\/(h1|H1)>", self.html)
-                if h1_elements is not None and len(h1_elements) > 0 and len(h1_elements[0]) > 3:
-                    title = h1_elements[0][2]
+                h1_elements = re.findall(r"<(h1|H1).*?>(.*)<\/(h1|H1)>", self.html)
+                if h1_elements is not None and len(h1_elements) > 0 and len(h1_elements[0]) == 3:
+                    title = h1_elements[0][1]
 
         if title is None and not URLUtils.is_twitter_status_url(self.url):
             index_last_separator = self.url.rfind("/")

@@ -27,7 +27,7 @@ class HTML2mdConverter:
                 # Replace link description with the page title instead
                 # of using the URL as description
                 logging.debug(f"Replace link description with the page title {href}")
-                extractor = HTMLExtractor(href)
+                extractor = HTMLExtractor(href, timeout)
                 title = extractor.get_title()
                 if title is not None:
                     data = title

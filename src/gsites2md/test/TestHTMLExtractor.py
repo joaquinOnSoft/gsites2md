@@ -15,9 +15,15 @@ class TestHTMLExtractor(unittest.TestCase):
         self.assertEqual("Resumen de las normas IUPAC 2005 de nomenclatura de Química Inorgánica para su uso en "
                          "enseñanza secundaria y recomendaciones didácticas &ndash; RSEQ", extractor.get_title())
 
+    def test_get_title_with_attributes(self):
+        extractor = HTMLExtractor("https://www.geogebra.org/m/wgppdvnm")
+        self.assertEqual("FQ3ESO T05 Representa gráfica e-t – GeoGebra", extractor.get_title())
+
     def test_get_title_with_uppercase(self):
         extractor = HTMLExtractor("http://hyperphysics.phy-astr.gsu.edu/hbase/Waves/string.html")
         self.assertEqual("Standing Waves on a String", extractor.get_title())
+
+
 
     def test_get_title_from_none_html(self):
         extractor = HTMLExtractor("https://rseq.org/wp-content/uploads/2018/09/5-OtrosMateriales.pdf#page=2", 5)
