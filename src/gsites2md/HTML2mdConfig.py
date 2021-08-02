@@ -11,7 +11,7 @@ class HTML2mdConfig:
         # Path to download Google drive content
         self.downloads = "."
         # Timeout, in seconds, to use in link validation connections.
-        self._timeout = "-1"
+        self._timeout = -1
         # Use the page title, header of level 1 or the last section of the URL as URL description.
         self.url = False
 
@@ -21,12 +21,6 @@ class HTML2mdConfig:
 
     @timeout.setter
     def timeout(self, value: str):
-        self._timeout = float(value)
+        self._timeout = int(value)
 
-    @staticmethod
-    def isfloat(value):
-        try:
-            float(value)
-            return True
-        except ValueError:
-            return False
+

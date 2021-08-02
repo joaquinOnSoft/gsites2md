@@ -7,7 +7,7 @@ from gsites2md.URLUtils import URLUtils
 
 class HTMLExtractor:
 
-    def __init__(self, url, timeout=-1):
+    def __init__(self, url: str, timeout: int = -1):
         """
         :param url: URL to be checked
         :param timeout: Connection time out in seconds (admits decimals, e.g. 1 or 0.750).
