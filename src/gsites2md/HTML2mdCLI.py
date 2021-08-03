@@ -30,6 +30,7 @@ def print_help():
           'URL as URL description (only when URL link a description are the same). NOTE: This option can be slow.')
     print('\t-t, --timeout <seconds>: (Optional) Timeout, in seconds, to use in link validation connections, '
           'e.g. "2" seconds. By default is unlimited')
+    print('\t-m, --multiline : (Optional) Support for multiline content in table cells. (Use under your own risk!)')
 
 
 def main(argv):
@@ -45,8 +46,8 @@ def main(argv):
     logging.info('Started')
 
     try:
-        opts, args = getopt.getopt(argv, "hs:d:rDt:u",
-                                   ["help", "source=", "dest=", "replace", "download", "timeout=", "url"])
+        opts, args = getopt.getopt(argv, "hs:d:rDt:um",
+                                   ["help", "source=", "dest=", "replace", "download", "timeout=", "url", "multiline"])
     except getopt.GetoptError:
         print_help()
         sys.exit(2)
@@ -70,7 +71,9 @@ def main(argv):
                 config.timeout = int(arg)
             else:
                 print_help()
-                sys.exit(f"Invalid timeout value: {arg}")
+                sys.exit(f"Invalid timeout value. Should be an integer: {arg}")
+        elif opt in ("-m", "--multiline"):
+            config.multiline = True
 
     if config.source and config.destination:
         if os.path.isfile(config.source) or \

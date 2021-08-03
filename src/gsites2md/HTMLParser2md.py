@@ -117,11 +117,14 @@ class HTMLParser2md(HTMLParser):
 
             self.links.append(self.href)
         elif tag == self.HTML_TAG_BR:
-            # Ignore <br> inside a table cell
             if self.last_cell is None:
                 html2md = HTML2mdConverter.br(attrs)
             else:
-                html2md = "  "
+                # Manage <br> inside a table cell
+                if self.config.multiline:
+                    html2md = "  \n"
+                else:
+                    html2md = "  "
         elif tag == self.HTML_TAG_H1:
             html2md = HTML2mdConverter.H1
         elif tag == self.HTML_TAG_H2:

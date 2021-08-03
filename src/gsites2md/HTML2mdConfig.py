@@ -14,6 +14,8 @@ class HTML2mdConfig:
         self._timeout = -1
         # Use the page title, header of level 1 or the last section of the URL as URL description.
         self.url = False
+        # (flag) Support for multiline content in table cells
+        self.multiline = False
 
     @property
     def timeout(self):
