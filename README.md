@@ -39,7 +39,7 @@ where:
 	-D, --download : (Optional) Flag: Download Google Drive content to local drive.This option will have effect only if is used in conjunction with --replace, otherwise will be ignored
 	-u, --url: (Optional) Use the page title, header of level 1 or the last section of the URL as URL description (only when URL link a description are the same). NOTE: This option can be slow.
 	-t, --timeout <seconds>: (Optional) Timeout, in seconds, to use in link validation connections. It admits milliseconds, e.g. "0.750" or seconds "2". By default is unlimited
-	-m, --multiline : (Optional) Support for multiline content in table cells (Use under your own risk!)	
+	-m, --multiline : (Optional) Support for multiline content in table cells. (Warning: Google Sites may use internal tables in HTML wich may not seem tables for the user. Use under your own risk!)	
 ```
 ## Setting up your development environment
 These are some recommended readings in order to set up a local environment using PyCharm;
