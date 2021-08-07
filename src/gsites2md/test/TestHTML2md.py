@@ -75,7 +75,7 @@ class TestHTML2md(TestCase):
         config = HTML2mdConfig(input_file_name, generated_output_file_name)
         # Generate friendly URL descriptions
         config.url = True
-        config.timeout = 5
+        config.timeout = 8
         HTML2md.process(config)
 
         expected_output = TestHTML2md.read_file(output_file_name)

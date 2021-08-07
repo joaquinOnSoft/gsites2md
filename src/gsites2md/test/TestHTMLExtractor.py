@@ -15,6 +15,10 @@ class TestHTMLExtractor(unittest.TestCase):
         self.assertEqual("Resumen de las normas IUPAC 2005 de nomenclatura de Química Inorgánica para su uso en "
                          "enseñanza secundaria y recomendaciones didácticas &ndash; RSEQ", extractor.get_title())
 
+    def test_get_title_without_attributes(self):
+        extractor = HTMLExtractor("http://rincones.educarex.es/fyq/index.php/2-bachillerato/selectividad")
+        self.assertEqual("Inicio", extractor.get_title())
+
     def test_get_title_with_attributes(self):
         extractor = HTMLExtractor("https://www.geogebra.org/m/wgppdvnm")
         self.assertEqual("FQ3ESO T05 Representa gráfica e-t – GeoGebra", extractor.get_title())
