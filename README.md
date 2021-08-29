@@ -63,6 +63,14 @@ Cloud Platform project and provide configuration details.
 
 Please see [Enable the Google Drive API](https://developers.google.com/drive/api/v3/enable-drive-api)
 
+> **NOTE**: Google has changed the Google Drive API. The app hasn't been tested wiht the new app
+> 
+> [Update to some Google Drive file links, admin decision recommended before July 23, 2021](https://workspaceupdates.googleblog.com/2021/06/drive-file-link-updates.html)
+> **Developers**: Items that have a [Drive API permission](https://developers.google.com/drive/api/v3/reference/permissions)with type=domain or type=anyone, where withLink=true (v2) 
+> or  allowFileDiscovery=false (v3), will be affected. In addition to the item ID, your application may now also need a 
+> resource key to access these items. Use our Developer resource to [learn more about how this update will impact your projects](https://developers.google.com/drive/api/v3/resource-keys). 
+
+
 ## Unit testing
 > In order to execute the unit test that downloads content from Google Drive, you must have access to the 
 > Google Drive account where the content is stored. 
